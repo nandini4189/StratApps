@@ -4,6 +4,7 @@
   </head>
   <body>
 		<h1> StratApps Main Page</h1>
+		<h5><p>Github is a devolopment platform for open source to business, we can host code,Review code manage projects and to build software alongside millions of other devolopers. </p></h5>
 		<p> Address: #1-58/5/A, 2nd floor Opp. 
 			Furniture Palace, Above Bank Of India,
 			 Gachibowli, Hyderabad, Telangana 500032.
