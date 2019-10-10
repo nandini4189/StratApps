@@ -1,0 +1,12 @@
+<html>
+<head>
+  <title><h3><center> Welcome to StratApps</center></h3></title>
+  </head>
+  <body>
+		<h1> StratApps Main Page</h1>
+		<p> Address: #1-58/5/A, 2nd floor Opp. 
+			Furniture Palace, Above Bank Of India,
+			 Gachibowli, Hyderabad, Telangana 500032.
+		</p>
+	</body>
+</html>
