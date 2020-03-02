@@ -1,0 +1,227 @@
+Date Functions:
+
+Tableau provides a variety of date functions.
+
+1. DATEADD(date_part, interval, date)
+
+Returns the specified date with the specified number interval added to the specified date_part of that date. 
+
+Ex: 	DATEADD('month', 3, #2004-04-15#)   
+      	DATEADD('day', 3, #2004-04-15#)
+      	DATEADD('year', 3, #2004-04-15#)
+	DATEADD('hour', 3, #2004-04-15#)
+	DATEADD('minute', 3, #2004-04-15#)
+	DATEADD('second', 3, #2004-04-15#)
+
+
+2. DATEDIFF(date_part,date1,date2,[start_of_week])
+
+Returns the difference between date1and date2 expressed in units of date_part.
+Ex:  	DATEDIFF('week', #2016-08-25#, #2016-08-30#)  
+	DATEDIFF('day', #2016-08-25#, #2016-08-30#) 
+	DATEDIFF('month', #2016-08-25#, #2016-10-30#)
+	DATEDIFF('year', #2016-08-25#, #2017-10-30#)
+	DATEDIFF('quarter', #2016-08-25#, #2017-10-30#)
+	DATEDIFF('hour', #2016-08-25#, #2017-10-30#)
+
+
+3. DATENAME(date_part,date,[start_of_week])
+
+Returns date_part of date as a string. The start_of_week parameter is optional. 
+
+Ex: 	DATENAME('year', #2016-08-25#)    	 
+	DATENAME('month', #2016-08-25#)            
+	DATENAME('day', #2016-08-25#)		  
+	DATENAME('quarter', #2016-08-25#)	  
+	DATENAME('dayofyear', #2016-08-25#)      
+	DATENAME('weekday', #2016-08-25#)        
+	DATENAME('week', #2016-08-25#)              
+	DATENAME('hour', #2016-08-25#)		  
+
+
+4. DATEPARSE(format,string)
+
+Converts a string to a datetime in the specified format.
+
+Ex: 	DATEPARSE ("dd.MMMM.yyyy", "25.August.2016") 		
+	DATEPARSE ("h'h' m'm' s's'", "10h 5m 3s") 
+
+     
+
+5. DATEPART(date_part, date, [start_of_week])
+Returns date_part of date as an integer. 
+Note: When the date_part is weekday, the start_of_week parameter is ignored. This is because Tableau relies on a fixed weekday ordering to apply offsets. 
+
+Ex: 	DATEPART('year', #2016-08-25#)		2016	
+	DATEPART('quarter', #2016-08-25#)		3
+	DATEPART('weekday', #2016-08-25#)	5
+	DATEPART('hour', #2016-08-25#)		0
+
+
+6. DATETRUNC(date_part, date, [start_of_week])
+
+Truncates the specified date to the accuracy specified by the date_part. This function returns a new date. For example, when you truncate a date that is in the middle of the month at the month level, this function returns the first day of the month. The start_of_week parameter is optional. If it is omitted, the start of week is determined by the data source.
+
+Ex:	 DATETRUNC('month', #2016-08-25#)		
+	DATETRUNC('quarter', #2016-08-25#)		
+	DATETRUNC('week', #2016-08-25#)			
+
+7. DAY(date)
+
+Returns the day of the given date as an integer.
+Ex: DAY(#2016-08-25#) 	
+
+8. ISDATE(string)
+
+Returns true if a given string is a valid date.
+Ex: 	ISDATE("August 25, 2016")	
+
+
+9. MAKEDATE(year, month, day)
+
+Returns a date value constructed from the specified year, month, and date.
+Ex:	MAKEDATE(2016, 8, 25) 	
+
+
+10. MAKEDATETIME(date,time)
+
+Returns a datetime that combines a date and a time. The date can be a date, datetime, or a string type. The time must be a datetime. This function is available only for MySQL connections.
+
+Ex:	MAKEDATETIME("1899-12-30", #07:59:00#)  	
+	MAKEDATETIME([Date], [Time]) 			
+
+
+11. MONTH(date) :
+
+Returns the month of the given date as an integer.
+Ex: 	MONTH(#2004-04-15#) 	 
+
+
+12. NOW( )
+
+Returns the current date and time.
+The return varies depending on the nature of the connection
+
+Ex: NOW( ) 
+
+13. TODAY( )
+
+Returns the current date.
+
+Ex: TODAY( ) 		
+
+----------------------------------------------------------------------
+
+Scenario 1: You need to select more then one value in Master Dashboard and then click on Right Arrow then it should                     navigate to Detail Dashboard.
+                    Detail Dashboard should filter according to Master Dashboard selection.
+
+for any reference go to this link through :
+http://www.tableauexpert.co.in/2016/01/do-you-feel-that-you-are-tableau-expert.html
+
+1. connect superstore data source
+2. In sheet 1 , Drag region into rows and category into cols and sales in text shelf
+3. In sheet 2, create a cal field Arrow with empty double quotes like "   "
+	=>drag into text shelf
+	=>in marks shelf , select shapes as arrows
+4. In sheet 3, drag category, subcategory into rows and region into cols and sales in text shelf
+5. Create a dashboard named as Master Dashboard 
+	
+	=>drag sheet 1 and 2 into dasboard
+
+6. Create another dashboard named as Detail Dashboard
+
+	=>drag sheet 3 into dasboard
+
+7. Goto Master Dashboard, from Dashborad menu select Actions
+
+	=>select Addaction
+	=>select source 
+			=>Master Dashboard :sheet1
+	=>select Target
+			=>Master Dashboard : sheet2
+	=>select : selection icon 
+
+8. Again create one more dashboard action  like
+
+=>select Addaction
+	=>select source 
+			=>Master Dashboard :sheet2
+	=>select Target
+			=>Detail Dashboard : sheet3
+	=>select : selection icon 
+
+9. Now we select data from master dashboard and click on arrow it goto detail dashboard but data not filter because when we apply actions on sheets, all actions are moved to filter shelf of respective sheets.
+
+10. Go to sheet2 => filter shelf => drill down => apply to work sheets => selected work sheets => sheet3.
+
+11. Now it gives the data after filter apply.
+
+
+---------------------------------------------------------------------------
+
+Scenario 2: I need the customers who made  1 order , 2 orders, 3 orders so on and how many number of orders were returned by them.
+
+for any reference go to this link through :
+http://www.tableauexpert.co.in/2016/02/do-you-feel-that-you-are-tableau-expert_29.html
+
+
+1. Create a cal field named as count of orders.
+
+{ FIXED [Customer Name] : COUNTD([Order ID])}
+
+2. Convert the  cal field count of orders into dimensions.
+
+3. Drag count of orders into cols and sales into rows.
+
+4. Create another cal field named as returns.
+
+{ FIXED [Customer Name] : COUNTD([Order ID (Returns)])}
+
+5. Convert the  cal field returns into dimensions.
+ 
+6. Drag  returns into color shelf and arrange the colors manually or ascending order.
+
+7.Goto sum(sales) =>quick table calculation => Percent of total 
+
+8. Goto sum(sales) =>computing using => Cell
+
+9. Now it display desired result.
+
+---------------------------------------------------------------------
+
+Scenario 3: I am showing report with category and Sum(Sales). User will select Dimension name from the “select dimension parameter”. Based on user selection, in next filter the values of that dimension will show. 
+
+For any reference go though this link
+http://www.tableauexpert.co.in/2016/08/do-you-feel-that-you-are-tableau-expert.html
+
+1.Create a parameter Selection Dimension(Parameters)
+
+Datatype: Stinrg 
+Allowable values : list
+	Region
+	Segment
+	Top 5 products by sales 
+
+2. Create a set on product name based top 5 sales named as Top 5 product by sales 
+ 
+3. Create a calculated field named as Top 5 product names like
+
+	if [Top 5  product by sales]  then [Product Name] else "others" END
+
+4. Create a calculated field named as filter calculation  like
+
+if [selection dimension]="Region" then [Region] 
+ELSEIF [selection dimension]="Segment" then [Segment]
+ELSEIF [selection dimension]="Top 5 products by sales" then [Top 5 product names]
+END
+
+5. Drag the category into columns and sales into rows
+
+6. Show the parameter contol of selection Dimenesion(Paramters)
+
+7. Drag the filter calculation into filtershelf.
+
+8. Based on the selection of filters the data will display the desired results.
+
+-------------------------------------------------------
+

@@ -1,0 +1,12 @@
+A new Viz On Bar chart in Different sizes
+
+1) city in to filters, select any country (Los angels)
+
+2) sum of sales into rows.
+
+3)customer name in to label
+
+4) quantity in to size and column and edit table calculation running total
+  compute using specific dimensions customer name.
+
+5)In marks card shelf convert into bars in size,manual right.
