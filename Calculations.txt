@@ -1,0 +1,24 @@
+YTD:
+
+[Order Date] <= TODAY() AND
+DATETRUNC( "year", [Order Date]) = DATETRUNC("year", TODAY() )
+
+
+MTD:
+
+
+[Order Date] <= TODAY() AND
+DATETRUNC( "month", [Order Date]) = DATETRUNC("month", TODAY() )
+
+
+
+Anchor date: parameter
+
+
+[Order Date] <= DATEADD( [Date Part],[Offset], [Anchor Date] ) AND
+DATETRUNC( [Date Part], [Order Date]) = DATETRUNC([Date Part], DATEADD([Date Part], [Offset], [Anchor Date] ))
+
+
+Offset:0 to 1 integer
+
+datePart: YTD,QTD,MTD Param

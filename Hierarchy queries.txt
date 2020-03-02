@@ -1,0 +1,35 @@
+
+Hierarchy-Queries:
+
+select  lpad('  ',2*LEVEL-1)||ENAME
+from emp
+start wiTH ENAME='KING'
+CONNECT BY PRIOR EMPNO=MGR
+
+
+........................................................
+
+1.select *from emp e
+where 2 =(select count (distinct sal) from emp ee where ee.sal>=e.sal)
+
+........................................................................
+
+2.select *from emp e 
+where e.sal=(
+select  max(sal) from emp e
+where e.sal<(select max(sal) from emp))
+
+........................................................................
+
+3.select * from 
+(select e.*,rank() over (order by sal desc) r from emp e) where r=2 
+
+
+..........................................................................
+
+4. select * from emp where sal =(select min(sal) from (select distinct sal  from emp order by sal desc)
+where rownum <=2)
+
+
+.................................................................
+

@@ -1,0 +1,11 @@
+
+ RFM Analysis-->
+	
+1.	Recency X Frequency: change the coloring of the view as per suggestion.
+
+2.	No.of customers(y) by No.of Orders(x): change the RFM Order detail to Customer detail wise navigation
+		
+						Change the RFm Order Detail to RFM Analysis Navigation.
+
+
+3. analyse the RFm Detail Redport data.
