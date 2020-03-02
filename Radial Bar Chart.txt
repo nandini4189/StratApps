@@ -1,0 +1,116 @@
+Data
+We will start by loading the following data into Tableau.
+
+Name	Path	Value
+Amazon Video	1	3.1
+Amazon Video	270	3.1
+Http	1	6.1
+Http	270	6.1
+Netflix	1	37.1
+Netflix	270	37.1
+Other	1	35.8
+Other	270	35.8
+YouTube	1	17.9
+YouTube	270	17.9
+
+
+
+Calculated Fields
+
+
+With our data set loaded into Tableau, we are going to create the following Calculated Fields and Bins:
+
+Path (bin)
+
+Right click on Path, go to Create and select Bins…
+In the Edit Bins dialogue window:
+Set New field name to Path (bin)
+Set Size of bins to 1
+Click Ok
+Note: The Path (bin) will allow us to use a table calculation to create additional data points between 1 and 270.
+
+Index
+
+INDEX()-1
+
+TC_Value
+
+WINDOW_MAX(SUM([Value]))
+
+TC_Max Value
+
+WINDOW_MAX(SUM([Value]))
+
+TC_Step Size
+
+[TC_Value]/[TC_Max Value]
+
+TC_Rank
+
+RANK_UNIQUE([TC_Value],'asc')
+
+X
+
+SIN([Index]*PI()/180*[TC_Step Size])*[TC_Rank]
+
+Let us spend a little time here explaining how we are using our other Calculated Fields:
+
+Using our Path (Bins) we are going to use densification to get additional points
+We need to convert percentages to Radians by multiplying by PI() and then dividing by 180.
+Y
+
+COS([Index]*PI()/180*[TC_Step Size])*[TC_Rank]
+
+So now that we have created a lot of Calculated fields, we will now put this together into a Worksheet.
+
+Worksheet
+We will now build our worksheet:
+
+Drag Name onto the Color Mark
+Drag Path (Bin) onto the Columns
+Right click on Path (Bin) and check Show Missing Values
+Drag Path (Bin) onto the Detail Mark
+Change the Mark Type to Line
+Drag X onto Rows
+Right click on X, go to Compute Using, select Path (Bin)
+Drag Y onto Columns
+Right click on Y, go to Compute Using, select Path (Bin)
+You should see the following:
+
+
+We will now edit the calculated fields to complete the Visualisation:
+
+Right click on X and select Edit Table Calculations
+In Nested Calculation select TC_Max Value
+Click on Specific Dimensions and select Path (Bin) and Name
+Ensure Name is on top
+In Nested Calculation select TC_Rank
+Click on Specific Dimensions and select Path (Bin) and Name
+Ensure Name is on top
+In At the Level select Name
+Right click on Y and select Edit Table Calculations
+In Nested Calculation select TC_Max Value
+Click on Specific Dimensions and select Path (Bin) and Name
+Ensure Name is on top
+In Nested Calculation select TC_Rank
+Click on Specific Dimensions and select Path (Bin) and Name
+Ensure Name is on top
+In At the Level select Name
+You should now see the following visualisation:
+
+
+Adjusting the Visual
+We will now do the following to get the look that we require:
+
+Remove all Grid Lines
+Remove Axis headers
+Drag Name onto Label
+Drag TC_Value onto Label
+Click on Label, select Line Ends and untick Label end of line
+End the Label Text
+Edit the colors
+Edit the Tooltips
+Increase the size of the lines
+After which you should have the following:
+
+
