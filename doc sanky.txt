@@ -1,0 +1,46 @@
+
+1)Union Data by adding Column "Vizside" In Custom SQL "LeftSide “and  "RightSide 
+2)Create a calculation Field ToPad 
+
+Topad:if [Vizside]="LeftSide" THEN 1 ELSE 49 END 
+
+3)Create a calculation field T 
+T:(Index()-25)/4 
+
+4)Create a calculation field Sigmoid(1/1+exp(1)^-[T]) to get curve rather than straight lines 
+
+5)Create a bin on ToPad with stepsize 1 and name it as "Padded" 
+
+6)Create a calculated field Rank1 
+Rank1:RUNNING_SUM(SUM([SALES]))/TOTAL(SUM([SALES])) 
+
+7)Duplicate the Rank1 and rename it as Rank2 
+
+8)Create a calculated field Curve 
+Curve: [RANK1]+([RANK2]-[RANK1])*Sigmoid 
+
+9)Create a calulated field Size Slicing : 
+Size Slicing:windows_avg(sum([sales])) 
+
+10)Drag T column in columns and Curve to Rows 
+
+11)Compute Curve with Rank1 ,Rank2 and T 
+Edit Table calculation Drop down and Select Rank1 select Specific dimension for Example if we are driving Category,Region then drag category , Region and Padded in detail shelf ,then columns will be enable under specific dimension ,Order the dimension as priority means if we are driving flow from category to Region then order must be Category-->Region-->Padded 
+Next Select rank2 ,Select Specific Dimension and change the order of specific dimension like Region--->category--->Padded 
+Next select T and Select specific dimension and select only padded 
+
+12)Compute T Using Padding 
+
+13)drag size slicing in the size and compute using padded to show the flow of quantity 
+
+14)Edit the axis of curve and fix to -5 to 5 and T to 0,1 (reverse the T-axis)
+
+15)Create a stacked bar with measure sales and dimension category 
+
+16)Repeat the above step to create stackbar of region 
+Add the All Sheets in Dashboard to show as flow diagram 
+
+17)Create highlight actions from one lement to other element 
+For example :Now from category --->Region then do the following in Highlightactions 
+Select the Stackbarsheet of category as source sheet ,Next in target sheet select Category,Sankychart1 and Sankchart2 if applicable 
+Now from Region sameas above select Region and sankychart1,sankychart2 if applicable 
