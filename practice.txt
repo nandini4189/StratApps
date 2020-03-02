@@ -1,0 +1,37 @@
+SELECT SYSDATE,'hello', student_id, COUNT(*)
+FROM enrollment
+GROUP BY student_id
+
+select *from  (select e.*,'abc' a from emp e where job='MANAGER'
+            union all
+            select e.*,'xyz' a from emp e where sal>3000) where a='&enter'
+
+
+---Display the length of first name for employees where last name contain character ‘b’ after 3rd position.
+
+select length(first_name),last_name from employees where last_name like'__b%'
+SELECT FIRST_NAME, LAST_NAME FROM EMPLOYEES WHERE INSTR(LAST_NAME,'B') > 3
+
+select first_name,last_name from employees where instr(last_name,'b')>3
+
+*********Display first name in upper case and email address in lower case for employees where the first name and email address are same irrespective of the case.
+
+select upper(first_name),lower(email) from employees where upper(first_name)=upper(email)
+
+
+********Display employees who joined in the current year.
+
+select first_name,hire_date from employees where to_char(hire_date,'yyyy')=to_char(hire_date,'yyyy');
+
+*******Display the number of days between system date and 1st January 2011.
+select  round(sysdate-to_date('01-jan-2011')) from employees
+
+******Display manager ID and number of employees managed by the manager.
+select manager_id,count(*) from employees group by manager_id
+
+********Display employee ID and the date on which he ended his previous job.
+select employee_id,max(end_date) from job_history 
+
+
+create table quarter(name varchar2(10),h_date date,sal number(10));
+desc quarter

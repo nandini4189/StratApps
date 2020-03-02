@@ -1,0 +1,65 @@
+				SQL QUERIES
+
+
+
+Write a query to add 2 where Nmbr is 10 and add 3 where Nmbr is 20.
+
+....................................................................
+
+create table a(id number(2))
+
+insert into a(id) values(30)
+
+select *from a
+
+10
+20
+30
+
+update a set id=case when id=10 then id+2
+                        when id=20 then id+20
+                        else
+                        id end
+
+
+12
+40
+30
+
+.....................................................................
+
+Write a SQL query to find the 10th highest employee 
+
+salary from an Employee table. Explain your answer.
+
+
+select *from emp e where 10=(select count(distinct sal) from emp e1 where e1.sal>e.sal)
+
+
+
+.............................................
+
+Given the table mass_table:
+
+
+weight
+
+5.67
+34.567
+365.253
+34
+
+
+weight	kg	gms
+
+5.67	5	67
+34.567	34	567
+365.253	365	253
+34	34	0
+
+select weight,trunc(weight) kg,nvl(substr(weight-trunc(weight),2),0) gms from gms
+
+.........................................................................................
+
+
+

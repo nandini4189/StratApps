@@ -1,0 +1,148 @@
+ ..........> 1. to display experiance of the employee for passing empno and date as parameters....
+ 
+ 
+create or replace function fd(pempno number,pdate date)
+return number
+is
+z number;
+begin
+select months_between(pdate,hiredate)/12 into z from emp where empno=pempno;
+return (round(z));
+end;
+
+select ename,sal,hiredate,fd(empno,sysdate) from emp where empno=7369
+
+
+
+-------------------------------------------------------------------------
+
+.....>2. To passing empno as parameter and display gross salary of that employee for the following condition
+
+create or replace function fun_gross(pempno number)
+return number
+is
+vsal number(10);
+hra number;
+da number;
+pf number;
+gross number;
+begin
+select sal into vsal from emp where empno=pempno;
+hra:=vsal*0.1;
+da:=vsal*0.2;
+pf:=vsal*0.1;
+gross:=vsal+hra+da-pf;
+return gross;
+end;
+
+select fun_gross(7566) from dual
+
+
+---------------------------------------------------------------------------
+
+create or replace procedure proc_exp
+ as
+ cursor c is select hiredate,trunc(months_between(sysdate,hiredate)/12)||'years' years,
+                        (trunc(months_between(sysdate,hiredate)-(trunc(months_between(sysdate,hiredate)/12)*12)))||'months' months,
+                        trunc(sysdate-add_months(hiredate,trunc(months_between(sysdate,hiredate))))||'days' days from emp;
+v c%rowtype;
+begin
+open c;
+loop
+fetch c into v;
+exit when c%notfound;
+uma(v.hiredate||' '||v.years||' '||v.months||' '||v.days);
+end loop;
+end;
+ 
+ set serveroutput on
+ exec proc_exp
+ 
+............................................................................
+
+ create or replace procedure e1(eempno number)
+ is
+ v emp%rowtype;
+z dept%rowtype;
+ begin
+ select * into v from emp where empno=eempno;
+uma(v.ename||' '||v.job||' '||v.sal||' '||v.deptno);
+select * into z from dept where deptno=v.deptno;
+uma(z.dname||' '||z.loc);
+  end;
+ 
+ set serveroutput on
+  exec e1(7369) 
+
+
+-------------------------------------------------------------------
+
+........> 8. write a plsql row level trigger if inserting on emp table that values stored in another table,
+              if updating on emp table those values are stored on another table,
+              if deleted on emp table those values are stored on enother table.
+
+create or replace trigger te2
+after insert or update or delete on emp
+for each row
+begin
+if inserting then
+insert into t1(empno,ename,job)values(:new.empno,:new.ename,:new.job);
+elsif updating then
+insert into t2(empno,ename,job) values(:old.empno,:old.ename,:old.job);
+elsif deleting then
+insert into t3(empno,ename,job) values(:old.empno,:old.ename,:old.job);
+end if;
+end;
+
+insert into emp(empno,ename,job) values(1001,'uma','executive');
+
+alter table emp enable all triggers
+select *from t1
+
+
+............................................................................
+
+........> 4. write a plsql statement level trigger on emp table do not perform dml operations on weekdays.
+
+
+create or replace trigger tr_weekday
+before insert or update or delete on emp
+begin
+if to_char(sysdate,'dy') in ('sat','sun') then
+ raise_application_error(-20181,'we cont perform dml operations on sat and sun');
+end if;
+end;
+
+alter table emp enable all triggers
+
+delete from dept where deptno=10
+select *from emp
+rollback
+
+........................................................
+..........> 5. write a plsql statement level trigger on emp table do not perform dml operations on last day of the month.
+
+create or replace trigger trg_lastday
+before insert or update or delete on emp
+begin
+if sysdate=last_day(sysdate) then
+raise_application_error(-20123,'we dont perform dml operations on last day of the month');
+end if;
+end;
+
+...........................................
+
+
+
+....> write a plsql trigger using emp,dept table implement on delete cascade concept, without using on delete clause.
+
+create or replace trigger trg_delete
+after delete on dept
+for each row
+begin
+delete from emp where deptno=:old.deptno;
+end;
+
+
+
+

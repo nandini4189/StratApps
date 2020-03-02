@@ -1,0 +1,258 @@
+********************** PRACTICR FOR PLSQL EXAM *********************
+
+ ..........> 1. to display experiance of the employee for passing empno and date as parameters....
+ 
+ 
+create or replace function fd(pempno number,pdate date)
+return number
+is
+z number;
+begin
+select months_between(pdate,hiredate)/12 into z from emp where empno=pempno;
+return (round(z));
+end;
+
+select ename,sal,hiredate,fd(empno,sysdate) from emp where empno=7369
+
+..............................................
+
+.....>2. To passing empno as parameter and display gross salary of that employee for the following condition
+
+create or replace function fun_gross(pempno number)
+return number
+is
+vsal number(10);
+hra number;
+da number;
+pf number;
+gross number;
+begin
+select sal into vsal from emp where empno=pempno;
+hra:=vsal*0.1;
+da:=vsal*0.2;
+pf:=vsal*0.1;
+gross:=vsal+hra+da-pf;
+return gross;
+end;
+
+select fun_gross(7566) from dual
+
+....................................................
+
+............> 3. write a plsql stored function for passing parameter as empno and calculate the tax for given condtions
+
+create or replace function fun_tax(pempno number)
+return number
+is
+vsal number;
+annsal number;
+it number;
+begin
+select sal into vsal from emp where empno=pempno;
+annsal:=vsal*12;
+if annsal>1000 and annsal<=15000 then
+it:=annsal*0.1;
+elsif annsal>15000 and annsal<=20000 then
+it:=annsal*0.2;
+elsif annsal>20000 then
+it:=annsal*0.3;
+else
+it:=0;
+end if;
+return it;
+end;
+
+show error
+
+select fun_tax(7369) from dual
+..............................................
+
+.........>4. display plsql function passing parameter as deptno and display the no of employees on that department............
+
+create or replace function fun_dept(pdeptno number)
+return number
+is
+cnt number;
+begin
+select count(*) into cnt from emp where deptno=pdeptno;
+return cnt;
+end;
+
+select fun_dept(30) from dual;
+
+...............................................
+
+.............> 5. write a plsql function to find the area of a circle......... 
+
+create or replace function fun_area(len number,wid number)
+return number
+is
+varea number;
+begin
+varea:=len*wid;
+return varea;
+end;
+
+select fun_area(10,40) from dual
+
+..........................................................
+
+..........> 6. write a plsql program to display the least number of the list(20,40,60);
+
+create or replace function fun_least(n1 number,n2 number,n3 number)
+return number
+as
+begin
+if n1>n2 then
+return n1;
+elsif n2>n3 then
+return n2;
+elsif n3>n1 then
+return n1;
+end if;
+end;
+
+select fun_least(20,40,60) from dual
+.......................................
+
+......> 7. write a plsql function accept account number and return account balance of the customer.
+
+create table account(acc_no number(14),cname varchar2(20),bal number(10))
+
+insert into account values(&acc_no,'&cname',&bal)
+
+create or replace function fun_account(pacc_no number)
+return number(20)
+is
+vbal number;
+begin
+select bal into vbal from account where acc_no=pacc_no;
+return vbal;
+end;
+
+select *from account
+
+show error
+...........................................
+
+*************   ******** ****** PROCEDURES ***** ********* ************
+
+
+Differences between Procedures and Functions :::
+____________________________________________
+
+			
+
+*	functions must return a values
+
+	function can be called as select statement
+	
+	functions are not pre compiled
+	
+	functions can have only input parameters
+
+
+
+*	procedures may or may not return any value
+
+	
+
+
+
+
+1. create a procedure for passing empno and display ename and sal of the employee.
+
+create or replace procedure proc1(pempno number)
+as
+vename varchar2(20);
+vsal number;
+begin
+select ename,sal into vename,vsal from emp where empno=pempno;
+dbms_output.put_line(vename||' '||vsal);
+end;
+
+set serveroutput on
+show error
+exec proc1(7902)
+
+.............................................
+
+    2. write a plsql procedure to passing a deptno as parameter and display all the employees details.
+
+create or replace procedure proc_dept(pdeptno number)
+as
+cursor c is select *from emp where deptno=pdeptno;
+i emp%rowtype;
+begin
+open c;
+loop
+fetch c into i;
+exit when c%notfound;
+uma(i.ename||' '||i.sal||' '||i.job||' '||i.hiredate);
+end loop;
+close c;
+end;
+
+set serveroutput on
+exec proc_dept(10)
+
+begin
+proc_dept(20);
+end;
+
+select *from emp
+
+select *from emp where deptno=20
+
+............................................................
+
+ 3. how to insert a row into a plsql procedure
+ 
+ create or replace procedure proc_insert(pdeptno in number,pdname in varchar2,ploc in varchar2)
+ is
+ begin
+ insert into dept values(pdeptno,pdname,ploc);
+ uma('record inserted to department through procedure');
+ end;
+ 
+show error
+rollback
+select *from dept
+exec proc_insert(50,'CREDIT_CARDS','hyd')
+.......................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

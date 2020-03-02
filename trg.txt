@@ -1,0 +1,103 @@
+1. Write a plsql trigger to avoid the dname as duplicate and null value
+
+create or replace trigger trg_nnd
+before insert or update 
+of dname
+on dept
+for each row
+declare
+cnt number;
+begin
+select count(*) into cnt 
+from dept
+where dname=:new.dname;
+if cnt>0 THEN
+raise_application_error(-20345,'dname should not be duplicate');
+elsif :new.dname is null then
+raise_application_error(-20346,'dname should not be null');
+end if;
+end;
+
+select * from emp;
+
+insert into dept values(60,'ACCOUNTING','HYD');
+
+insert into dept values(60,'NULL','HYD');
+
+
+2. write a plsql trigger to trace the userid and date of delete into trace table?
+
+create table trace(userid varchar2(20),dor date);
+
+create or replace trigger trg_del
+after delete 
+on emp
+for each row
+begin
+insert into trace values (user,sysdate);
+end;
+
+delete from emp where empno=7844;
+
+select * from trace;
+
+
+
+3. When condition 
+
+-- condition is true then only trigger will excute otherwise not excuted.
+
+create or replace trigger trg_del
+after delete 
+on emp
+for each row
+when (old.sal>1500)
+begin
+insert into trace values (user,sysdate);
+end;
+
+4. instead of triggers
+
+-- Trigger on View
+-- Used to manipulate join views
+-- Defaulty it is row level trigger
+-- No need to use the for each keyword.
+
+create or replace view ev as select * from emp;
+
+create or replace trigger trg_ev
+instead of delete
+on ev
+begin
+rafi('record is removed');
+end;
+
+delete from ev where empno=7844;
+
+select * from ev;
+
+---------------------------
+
+create or replace view ed_view
+as
+select empno,ename,job,sal,e.deptno,dname,loc
+from emp e,dept d
+where e.deptno=d.deptno;
+
+
+create or replace trigger trg_edv
+instead of delete
+on ed_view
+begin
+delete from emp
+where deptno=:old.deptno;
+delete from dept
+where deptno=:old.deptno;
+rafi('records are removed');
+end;
+
+delete from ed_view where deptno=10;
+
+select * from emp;
+
+select * from dept;

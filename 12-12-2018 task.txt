@@ -1,0 +1,152 @@
+
+1. Write a procedure that copies all departments to a table called old_dept. 
+
+Do not use a cursor FOR loop. Display how many rows were copied.
+
+
+
+create or replace procedure p_dept
+is
+cursor c1 is select *from dept;
+i dept%rowtype;
+begin
+open c1;
+loop
+fetch c1 into i;
+exit when c1%notfound;
+insert into old_dept values(i.deptno,i.dname,i.loc);
+end loop;
+uma('the no of rows are:'||c1%rowcount);
+close c1;
+end;
+
+.........................................................................
+
+2. Write a procedure to display the top 6 employees with respect to salaries.
+
+
+create or replace procedure top_sal
+is
+cursor c1 is select  sal from emp order by sal desc;
+v_sal number;
+begin
+open c1;
+loop
+fetch c1 into v_sal;
+uma(v_sal);
+exit when c1%rowcount=6;
+end loop;
+uma('top 6 employees');
+close c1;
+end;
+
+
+...................................................................
+
+3. Write a procedure that uses a cursor to retrieve 
+
+the department number and the department name from the dept table. Pass the department number to another cursor to retrieve from the emp table the details of employee name, job, hiredate and salary of all the employees who work in that department.
+
+
+create or replace procedure p_empdetails(p_deptno in number)
+is
+cursor c1 is select *from dept where deptno=p_deptno;
+cursor c2 is select *from emp where deptno=p_deptno;
+i dept%rowtype;
+v emp%rowtype;
+begin
+open c1;
+loop
+fetch c1 into i;
+exit when c1%notfound;
+dbms_output.put_line(i.deptno||' '||i.dname||' '||i.loc);
+end loop;
+close c1;
+open c2;
+loop
+fetch c2 into v;
+exit when c2%notfound;
+dbms_output.put_line(v.ename||' '||v.job||' '||v.hiredate||' ' ||v.sal);
+end loop;
+close c2;
+end;
+
+show error
+
+exec p_empdetails(20)
+...........................................................................
+
+
+4. Create a procedure that deletes rows from the emp table. 
+
+It should accept 1 parameter, job; only delete the employee’s with that job.
+
+ Display how many employees were deleted. Write a PL/SQL block to invoke the procedure.
+
+
+create or replace procedure proc_del(p_job in varchar2)
+is
+begin
+delete from emp1 where job=p_job;
+uma('deleted records are:'||sql%rowcount);
+end;
+
+SHOW ERROR
+set serveroutput on
+exec proc_del('MANAGER')
+
+begin
+uma('deleted job details');
+proc_del('CLERK');
+end;
+
+SELECT *FROM EMP
+
+.............................................................
+
+5. Change the above procedure so that it returns 
+
+the number of employees removed via an OUT parameter. 
+
+Write a PL/SQL block to invoke the procedure and display how many employees Were deleted.
+
+create or replace procedure proc_del(p_job in varchar2,cnt out number)
+is
+i number;
+begin
+select count(*) into i from emp1 where job=p_job;
+delete from emp1 where job=p_job;
+uma('deleted records are:'||i);
+end;
+
+
+show error
+declare
+x varchar2(20);
+begin
+proc_del('CLERK',x);
+uma('deleted job details');
+end;
+
+SELECT *FROM EMP1
+.......................................................................
+
+6. Convert the above program to a function. 
+
+Instead of using an OUT parameter for the number of employees deleted, use the functions return value. Write a program to invoke the function and 
+
+display how many employees were deleted.
+
+create or replace function fun_del(p_job in varchar2)
+return number
+is
+cnt number;
+begin
+select count(*) into cnt from emp where job=p_job;
+delete from emp where job=p_job;
+uma('deleted rows are:'||cnt);
+end;
+
+show error
+
+select fun_del('CLERK') from dual
