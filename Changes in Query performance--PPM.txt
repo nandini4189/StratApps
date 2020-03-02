@@ -1,0 +1,50 @@
+
+
+"SELECT ""d_subscription"".""cid"" AS ""cid"",
+  ""d_login"".""customer_name"" AS ""customer_name"",
+  ""Subscription Start Date"".""day_date"" AS ""day_date (time_dim1)"",
+  ""d_subscription"".""license_type"" AS ""license_type"",
+  ""d_plan"".""plan"" AS ""plan"",
+  ""d_subscription"".""stages"" AS ""stages""
+FROM ""public"".""d_login"" ""d_login""
+  INNER JOIN ""public"".""d_members"" ""d_members"" ON (""d_login"".""customer_id"" = ""d_members"".""customer_id"")
+  INNER JOIN ""public"".""time_dim"" ""Membership Time Dim"" ON (""d_members"".""member_login_date"" = ""Membership Time Dim"".""day_key"")
+  INNER JOIN ""public"".""d_subscription"" ""d_subscription"" ON (""d_members"".""member_id"" = ""d_subscription"".""mem_id"")
+  INNER JOIN ""public"".""d_transaction"" ""d_transaction"" ON (""d_login"".""customer_id"" = ""d_transaction"".""customer_id"")
+  INNER JOIN ""public"".""d_coupons"" ""d_coupons"" ON (""d_subscription"".""coupon_id"" = ""d_coupons"".""id"")
+  INNER JOIN ""public"".""d_plan"" ""d_plan"" ON (""d_subscription"".""plan_id"" = ""d_plan"".""id"")
+  INNER JOIN ""public"".""time_dim"" ""Subscription Start Date"" ON (""d_subscription"".""start_date_id"" = ""Subscription Start Date"".""day_key"")
+  INNER JOIN ""public"".""time_dim"" ""Transaction Time Dim"" ON (""d_transaction"".""date_id"" = ""Transaction Time Dim"".""day_key"")
+  INNER JOIN ""public"".""time_dim"" ""Coupons Time Dim"" ON (""d_coupons"".""cupons_used_date"" = ""Coupons Time Dim"".""day_key"")
+WHERE ((""d_subscription"".""cid"" = 'CA 30187001') AND (CAST(TRUNC(EXTRACT(YEAR FROM ""Coupons Time Dim"".""day_date"")) AS INTEGER) IN (2016, 2017, 2018, 2019)) AND (CAST(TRUNC(EXTRACT(YEAR FROM ""Membership Time Dim"".""day_date"")) AS INTEGER) IN (2016, 2017, 2018, 2019)))
+GROUP BY 1,
+  2,
+  3,
+  4,
+  5,
+  6"
+
+.................................................................................
+
+
+
+"SELECT ""d_subscription"".""cid"" AS ""cid""
+FROM ""public"".""d_members"" ""d_members""
+  INNER JOIN ""public"".""time_dim"" ""Membership Time Dim"" ON (""d_members"".""member_login_date"" = ""Membership Time Dim"".""day_key"")
+  INNER JOIN ""public"".""d_subscription"" ""d_subscription"" ON (""d_members"".""member_id"" = ""d_subscription"".""mem_id"")
+  INNER JOIN ""public"".""d_coupons"" ""d_coupons"" ON (""d_subscription"".""coupon_id"" = ""d_coupons"".""id"")
+  INNER JOIN ""public"".""time_dim"" ""Coupons Time Dim"" ON (""d_coupons"".""cupons_used_date"" = ""Coupons Time Dim"".""day_key"")
+WHERE ((CAST(TRUNC(EXTRACT(YEAR FROM ""Coupons Time Dim"".""day_date"")) AS INTEGER) IN (2016, 2017, 2018, 2019)) AND (CAST(TRUNC(EXTRACT(YEAR FROM ""Membership Time Dim"".""day_date"")) AS INTEGER) IN (2016, 2017, 2018, 2019)))
+GROUP BY 1
+ORDER BY 1 ASC NULLS FIRST"
+
+
+
+
+
+
+
+
+
+
+
