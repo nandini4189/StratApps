@@ -1,0 +1,1176 @@
+Snippet Name: %TYPE vs %ROWTYPE - What's the difference?
+
+Description: Both %TYPE and %ROWTYPE are used to define 
+		variables in PL/SQL as it is defined within the database.
+ 		If the datatype or precision of a column changes, 
+		the program automatically picks up the new definition from the database.
+
+The %TYPE and %ROWTYPE constructs provide data independence,
+	 reduce maintenance costs, and allows programs to adapt as the database changes.
+
+
+
+CONSTANTS EXPLANATION:
+
+	Declaring a constant is like declaring a variable except that you must add the keyword CONSTANT and immediately assign a value to the constant.
+
+No further assignments to the constant are allowed.
+
+
+SYNTAX: constant_name CONSTANT datatype := VALUE; 
+
+
+Explanation :
+
+**** Constant_name is a predefined name of the constant (similar to a variable name).
+
+**** CONSTANT is a reserved keyword.
+
+**** Data type is a valid PL/SQL data type.
+
+**** Size is an optional specification of data type. It holds maximum capacity value for the particular variable.
+
+**** Value must be assigned to a constant when it is declared. You can not assign or change it later.
+
+**** Each constant declaration is terminated by a semicolon.
+
+
+
+EXAMPLE:
+	DECLARE 
+salary_increase CONSTANT number (3) := 10; 
+
+	
+ You must assign a value to a constant at the time you declare it. 
+	
+     If you do not assign a value to a constant while declaring it and try to 
+	
+	assign a value in the execution section, you will get a error.
+
+
+
+
+ declare
+   a number:=&a;
+   b number:=&b;
+   begin
+    a:=a+b;
+   b:=a-b;
+   a:=a-b;
+   
+     dbms_output.put_line(a||' '||b);
+end;
+
+
+
+declare
+v_ename emp.ename%type;
+v_deptno emp.deptno%type;
+cursor c1 is select ename from emp;
+cursor c2 is select deptno from emp;
+rowcount number;
+begin
+    if not c1%isopen then
+    open c1;
+    end if;
+    loop
+fetch c1 into v_ename;
+    exit when c1%notfound;
+    uma(v_ename);
+    end loop;
+rowcount:=c1%rowcount;
+uma('the number of employees are:'|| rowcount);
+close c1;
+    open c2;
+    fetch c2 into v_deptno; 
+    while c2%found 
+    loop
+        fetch c2 into v_deptno; 
+    uma(v_deptno);
+    end loop;
+close c2;
+end;
+
+commit
+
+select *from employees
+declare
+v_first_name employees.first_name%type;
+begin
+select first_name into v_first_name from employees where first_name='Steven';
+dbms_outputlname);
+exception when too_many_rows then
+uma('more than two numbers ');
+end;
+
+
+
+
+declare
+v_ename varchar2(20);
+begin
+select ename into v_ename from emp where sal=3000;
+uma(v_ename);
+exception when too_many_rows then
+uma('the more than two numbers ');
+end;
+
+declare
+v_ename emp.ename%type;
+begin
+select ename into v_ename from emp where ename='uma';
+uma(v_ename);
+exception when no_data_found then
+uma('no data exists in a table');
+end;
+
+
+commit
+
+declare
+cursor c1 is select ename from emp;
+v_ename emp.ename%type;
+begin
+open c1;
+fetch c1 into v_ename;
+uma(v_ename);
+open c1;
+exception when cursor_already_open then
+uma('cursor already open baby');
+close c1;
+end;
+
+commit
+
+declare
+cursor c1 is select sal from emp;
+v_sal emp.sal%type;
+begin
+fetch c1 into v_sal;
+uma(v_sal);
+close c1;
+exception
+when invalid_cursor then
+uma('not open a cursor better to open a cursor');
+end;
+
+
+
+begin
+insert into emp(empno,sal) values(1,'devi');
+exception 
+when invalid_number then
+uma('invalid string type');
+end;
+
+
+
+
+                                        ************ PL SQL ************
+
+set serveroutput on                                  
+                                        
+Declare
+a number;
+sum1 number :=0;
+Begin
+a:=1;
+loop
+sum1:=sum1+a;
+exit when (a=100);
+a:=a+1;
+end loop;
+dbms_output.put_line('Sum between 1 to 100 is '||sum1);
+End;
+
+declare
+    str1 varchar2(50):='&str';
+    str2 varchar2(50);
+    len number;
+    i number;
+ begin
+    len:=length(str1);
+        for i in reverse 1..len
+    loop
+        str2:=str2 || substr(str1,i,1);
+    end loop;
+        dbms_output.put_line('Reverse of String is:'||str2);
+end;
+
+commit
+
+declare
+a number;
+begin
+a:=200;
+dbms_output.put_line('the value of a is:'||a);
+     declare
+        n number:=500;
+        v_tot number;
+        begin
+        a :=300;
+        n := 500;
+        v_tot:=a+n;
+        dbms_output.put_line('the sum of two numbers a,n is:'||v_tot);
+      end; 
+dbms_output.put_line('the value a is:'||a);
+end;
+
+
+
+declare
+a number;
+b number;
+c number;
+begin
+a:=200;
+b:=500;
+c:=b-a;
+dbms_output.put_line('the subtraction of values are:'||c);
+end;
+
+commit;
+
+
+declare
+m number;
+n number;
+begin
+m:=1000;
+dbms_output.put_line('the m value is:'||m);
+    declare
+     n number;
+    i number;
+    begin
+    m:=100;
+    n:=200;
+    i:=m*n;
+    dbms_output.put_line('the multiplication of two numbers is m,n is:'||i);
+    end;
+dbms_output.put_line('the outer value is:'||m);
+end;
+
+
+declare
+m number;
+n number;
+begin
+m:=1000;
+    declare
+     n number;
+    i number;
+--m number;
+    begin
+    m:=100;
+    n:=200;
+    i:=m*n;
+    dbms_output.put_line('the multiplication od two numbers is m,n is:'||i);
+    end;
+dbms_output.put_line('the outer value is:'||s);
+end;
+
+
+set serveroutput on
+
+declare
+a number:=2;
+begin
+declare
+c number:=10;
+begin
+dbms_output.put_line('the value is:' || a||c);
+end;
+end;
+
+
+commit
+
+
+create table marks(std_id number(5),mt number(10),me number(10),mm number(10),mh number(10),ms 
+number(10),mss number(10));
+
+insert into marks values(&std_id,&mt,&me,&mm,&mh,&ms,&mss);
+
+set serveroutput on
+declare
+v_num number;
+v1_num number;
+v2_num number;
+v3_num number;
+v4_num number;
+begin
+select std_id,(mt+me+mm+mh+ms+mss) "total_marks",
+	      ((mt+me+mm+mh+ms+mss)/6) "avg_marks",
+	greatest(mt,me,mm,mh,ms,mss) "max_marks",
+	least(mt,me,mm,mh,ms,mss) "min_marks" into v_num,v1_num,v2_num,v3_num,v4_num from marks where std_id=103;
+	dbms_output.put_line('the marks of student id:'||v1_num||' '||v2_num||' '||v3_num||' '||v4_num);
+end;
+
+select *from marks
+
+
+
+DECLARE  
+i NUMBER := 1;  
+BEGIN  
+LOOP  
+EXIT WHEN i>10;  
+DBMS_OUTPUT.PUT_LINE(i);  
+i := i+1;  
+END LOOP;  
+END;  
+
+begin
+for a in 1..10 loop
+dbms_output.put_line(a);
+end loop;
+end;
+
+commit;
+
+declare
+var1 number:=&var1;
+begin
+if mod(var1,2)=0 then
+dbms_output.put_line(' 1 is even');
+else
+dbms_output.put_line('1 is odd');
+end if;
+end;
+
+
+
+
+declare
+ v_ename;
+ v_comm;
+ v_netsal;
+ v_sal;
+ begin
+ select ename,sal,sal+nvl(comm,0) "netsal"
+ into v_ename,v_sal,v_netsal,v_comm from emp where empno=&empno;
+ dbms_output.put_line('the emp details :'||v_ename||' '||v_sal||' '||v_netsal||' '||v_comm);
+ end;
+
+
+
+SELECT deptno
+, COUNT(*) OVER ( ) AS empcnt
+FROM scott.emp
+GROUP BY deptno;
+
+SELECT DISTINCT deptno ,count(*) 
+ OVER ( ) AS empcnt
+FROM scott.emp;
+
+SELECT DISTINCT deptno
+, COUNT(*) OVER ( ) AS empcnt
+FROM scott.emp;
+
+SELECT deptno, ename, sal, job
+, COUNT ( * ) OVER ( PARTITION BY job ) jobcount
+, SUM ( sal ) OVER ( PARTITION BY deptno ) deptsum
+from scott.emp;
+
+SELECT deptno, ename, hiredate
+, LAG ( ename ) OVER ( ORDER BY hiredate ) prior_hire
+FROM scott.emp
+ORDER BY deptno, ename;
+
+
+SELECT empno,
+       ename,
+       job,
+       sal,
+       LEAD(sal, 1, 0) OVER (ORDER BY sal) AS sal_next
+       --LEAD(sal, 1, 0) OVER (ORDER BY sal) - sal AS sal_diff
+FROM   emp;
+
+
+
+SELECT deptno, ename, sal
+, LAG ( ename ) OVER ( ORDER BY ename ) f1
+, LAG ( ename , 2 ) OVER ( ORDER BY ename ) f2
+, LEAD ( ename ) OVER ( ORDER BY ename DESC) f3
+, LAG ( sal ) OVER ( ORDER BY ename ) f4
+FROM scott.emp
+ORDER BY deptno, ename;
+
+
+select deptno,ename,sal,lag(sal) over(order by sal DESC) f from scott.emp
+
+SELECT deptno, empno, ename, sal,job
+, MIN ( sal ) OVER (PARTITION BY deptno,JOB ) minsal
+FROM scott.emp;
+
+
+SELECT deptno, ename, sal
+, RANK ( ) OVER ( ORDER BY ename ) f1 
+, DENSE_RANK ( ) OVER ( ORDER BY ename ) f2
+, ROW_NUMBER ( ) OVER ( ORDER BY ename ) f3
+FROM scott.emp
+ORDER BY deptno, sal;
+
+select deptno,sal,ename,job,rank() over (order by sal) f1 from emp
+select deptno,sal,ename,job,dense_rank() over (order by sal) f1 from emp
+select deptno,sal,ename,job,row_number() over (order by ename) f1 from emp
+
+SELECT deptno, ename, job, sal, hiredate
+, ROW_NUMBER ( ) OVER ( ORDER BY sal DESC) r1 from emp
+
+SELECT deptno, ename, sal
+, SUM ( sal ) OVER ( ORDER BY ename ) s
+, COUNT ( * ) OVER ( ORDER BY ename ) c
+, MIN ( sal ) OVER ( ORDER BY ename ) mn
+, MAX ( sal ) OVER ( ORDER BY ename ) mx
+FROM scott.emp
+WHERE deptno = 10;
+
+
+Select count(*) over (order by hiredate asc range 50 preceding) from emp;
+
+SELECT empno, ename, hiredate
+, COUNT(*) OVER ( ORDER BY hiredate
+
+RANGE BETWEEN INTERVAL '6' MONTH PRECEDING
+
+AND INTERVAL '6' MONTH FOLLOWING ) AS six_months from emp
+
+select deptno,ename,hiredate,count(*) 
+over (order by hiredate range between interval '1' month preceding and interval '1' month following) as six_months from scott.emp;
+
+select hiredate,sum(sal) over
+(order by hiredate range between interval '6' month preceding and interval '6' month following) as six_months from emp;
+
+select sum(sal) from emp where hiredate='17-dec-80';
+
+
+
+set serveroutput on
+
+declare
+s varchar2(5):='s';
+begin
+if lower(s) in ('a','e','i','o','u') then
+dbms_output.put_line('a is vowel');
+else
+dbms_output.put_line('s is not a vowel');
+end if;
+end;
+
+................
+
+declare
+n number:=10;
+m number:=30;
+begin
+dbms_output.put_line('starts the value');
+    if (n=m) then 
+    dbms_output.put_line('n is not correct');
+        elsif(n!=m) then
+        dbms_output.put_line('n is correct');
+            elsif(n<m) then
+            dbms_output.put_line('n is lower value');
+                elsif(n>m) then
+                dbms_output.put_line('n is highest value');
+                else
+                dbms_output.put_line('n is unknown');
+                end if;
+end;
+
+set serveroutput on
+
+declare
+a number(3):=300;
+b number(3):=300;
+begin
+--dbms_output.put_line('program starts in:');
+if(a=b) then
+dbms_output.put_line('a is correct');
+    if(a<=b) then
+    dbms_output.put_line('a is equal');
+        if(a>b) then
+        dbms_output.put_line('a is greater value');
+            if(a!=b) then
+            dbms_output.put_line('a is not equal value');
+                if(b<a) then
+                dbms_output.put_line('b is correct value');
+                end if;
+            end if;
+        end if;
+    end if;
+end if;
+dbms_output.put_line('invalid value');
+end;
+
+commit
+
+DECLARE 
+   a number(2) := 15; 
+BEGIN 
+   WHILE a<20 LOOP 
+      dbms_output.put_line('value of a: ' || a); 
+      a := a + 1; 
+   END LOOP; 
+END; 
+/ 
+
+declare
+i number(2);
+j number(2);
+begin
+i:=2;
+loop
+    j:=2;
+    loop
+    exit when (mod(i,j)=0) or  (j=i);
+    j:=j+1;
+    end loop;
+IF (j = i ) THEN 
+      dbms_output.put_line(i || ' is prime'); 
+   END IF; 
+   i := i + 1; 
+   exit WHEN i = 50; 
+   END LOOP; 
+END; 
+
+commit
+
+
+
+set serveroutput on
+declare
+
+
+
+ create materialized view emp_dno enable query rewrite as select deptno,sum(sal),count(empno) fr
+om emp group by deptno;
+
+
+
+create materialized view emp_dept_count
+    as 
+    select dname,job,count(*) from emp e,dept d
+    where e.deptno=d.deptno
+    group by dname,job;
+
+
+select *from emp_dept_coun
+
+update emp set sal=1000 where ename='SMITH'
+select *from emp
+
+select *from emp_dept_count
+
+CREATE or replace MATERIALIZED VIEW T
+REFRESH 
+START WITH SYSDATE
+NEXT SYSDATE + 1
+AS SELECT *from scott.emp
+
+commit
+
+
+set serveroutput on
+declare
+n number:=10;
+begin
+--dbms_output.put_line('program starts now');
+    loop
+   dbms_output.put_line('n value prints:'||n);
+    n:=n+1;
+    if n<=10 then
+     raise_application_error
+            (-20000,'it will show');
+    end if;
+    end loop;
+end;
+
+declare
+
+
+declare
+n number(2):=2;
+sum number(2):=0;
+begin
+while n<=10 
+    loop
+        dbms_output.put_line('the even number is:'||n);
+        sum:=sum+n;
+        n:=n+2;
+    end loop;
+dbms_output.put_line('the sum of even numbers are:'||sum);
+end;
+
+
+
+DECLARE
+    num NUMBER(3) := 2; 
+    sum1 NUMBER(4) := 0; 
+BEGIN
+    WHILE num <= 5 LOOP     
+        dbms_output.Put_line(num);
+        sum1 := sum1 + num; 
+         num := num + 2; 
+        END LOOP; 
+      dbms_output.Put_line('Sum of even numbers is ' || sum1); 
+END; 
+
+declare
+num1 number(10);
+sum1 number(5);
+begin
+num1:=3;
+sum1:=1;
+while num1<=10 loop
+    dbms_output.put_line(num1);
+    sum1:=sum1+num1;
+    end loop;
+    dbms_output.put_line('sum of odd numbers are:'||sum1);
+end;
+
+
+declare
+n number:=2;
+s number:=0;
+begin
+  loop
+     dbms_output.put_line(n);
+      n:=n+2;
+   s:=s+n;
+    exit when n>=10;
+    end loop;
+dbms_output.put_line(s);
+end;
+
+
+declare
+n number:=2;
+s number:=0;
+begin
+  while n<=10 loop
+     dbms_output.put_line(n);
+      n:=n+2;
+   s:=s+n;
+    end loop;
+dbms_output.put_line(s);
+end;
+
+
+
+declare
+a varchar2(10):='&a';
+b varchar2(10):='&b';
+c varchar2(10);
+begin
+dbms_output.put_line('before');
+dbms_output.put_line('a= '||a||' ,' ||'b= '||b);
+c:=a;
+a:=b;
+b:=c;
+dbms_output.put_line('after');
+dbms_output.put_line('a= '||a||' ,' ||'b= '||b);
+end;
+
+commit
+
+*********** how to swap two numbers without using third variable.
+
+
+
+
+set serveroutput on
+declare
+v_exp number(2);
+v_hike number(5,2);
+v_sal number;
+begin
+select floor((sysdate-hiredate) / 365 ),sal into v_exp,v_sal
+from emp where empno=7369;
+if (v_exp>10) then
+    v_hike:=1.20;
+     dbms_output.put_line('the hike of emp'||v_sal*v_hike);
+    elsif (v_exp>5) then
+        v_hike:=1.10;
+         dbms_output.put_line('the hike of emp'||v_sal*v_hike);
+        else
+        v_hike:=1.05;
+         dbms_output.put_line('the hike of emp'||v_sal*v_hike);
+        end if;
+ end;
+
+select sysdate-hiredate/365 from emp where 
+
+select sal,hiredate from emp where empno=7369
+
+update emp set sal=800 where ename='SMITH'
+
+commit
+
+set serveroutput on
+declare
+v_employeeid employees.employee_id%type := :sv_employeeid;
+v_hiredate employees.hire_date%type ;
+v_exp number;
+begin
+select hire_date into v_hiredate from employees where employee_id=v_employeeid;
+v_exp := round((months_between(sysdate,v_hiredate)/12),3);
+DBMS_OUTPUT.PUT_LINE('employees experience is '||v_exp||'in years');
+end;
+
+
+select round((months_between(sysdate,hiredate)/12),3) from emp where ename='SMITH'
+
+
+declare
+    odd number:=0;
+    even number:=0;
+    i number;
+    begin
+    for i in 1..100
+    loop
+    if(i mod 2=0) then
+    even:=even+i;
+   else
+   odd:=odd+i;
+   end if;
+   end loop;
+   dbms_output.put_line('the sum of 100 even no is'||even);
+   dbms_output.put_line('the sum of 100 odd no is'||odd);
+   end;
+   /
+   
+   declare
+   i emp.sal%type;
+   n emp.ename%type;
+   begin
+   select sal,ename into i,n from emp where empno=&empno;
+   dbms_output.put_line(i||' '||n);
+   end;
+   
+     
+   declare
+   a number:=&a;
+   b number:=&b;
+   begin
+    a:=a+b;
+   b:=a-b;
+   a:=a-b;
+   
+     dbms_output.put_line(a||' '||b);
+end;
+
+
+declare
+i emp%rowtype;
+begin
+select ename,sal,job into i.ename,i.sal,i.job from emp where empno=&empno;
+dbms_output.put_line(i.ename||' '||i.sal||' '||i.job);
+end;
+
+commit
+select *from emp
+
+
+*********** PRIME NUMBER ***********
+
+set serveroutput on
+declare
+n number:=10;
+i number:=2;
+temp number:=1;
+begin
+for i in 2..n/2
+loop
+ if mod(n,i)=0 then
+ temp:=0;
+ exit;
+ end if;
+ end loop;
+ if temp=0 then
+ dbms_output.put_line('true');
+  end if;
+ end;
+ 
+ 
+    declare
+    n number; 
+    m number; 
+    temp number:=0; 
+    rem number; 
+   begin
+    n:=5432112345; 
+    m:=n; 
+     while n>0 
+    loop 
+        rem:=mod(n,10); 
+        temp:=(temp*10)+rem; 
+        n:=trunc(n/10); 
+    end loop; 
+      if m = temp
+    then
+        dbms_output.put_line('true'); 
+    else
+        dbms_output.put_line('false'); 
+    end if; 
+end; 
+/ 
+  
+  
+declare 
+n number := 1; 
+begin 
+while n<=10 
+loop 
+dbms_output.put_line(n); 
+n := n+2; 
+end loop; 
+end;
+/
+
+
+
+declare
+n number:=1;
+--s number:=0;
+begin
+  loop
+     dbms_output.put_line(n);
+      n:=n+2;
+   --s:=s+n;
+    exit when n>=10;
+    end loop;
+--dbms_output.put_line(s);
+end;
+
+
+declare
+n number:=&n;
+begin
+if mod(n,2)=1 then
+dbms_output.put_line('the no is odd');
+else
+dbms_output.put_line('the no is even');
+
+--n:=n+2;
+end if;
+end;
+
+  
+   
+
+DECLARE
+    i NUMBER;
+    counter NUMBER;
+    n NUMBER;
+    k NUMBER;
+BEGIN
+    i := 2;
+    counter := 0;
+    n := 50;
+    k := n/2;
+    FOR i IN 1..k LOOP
+        IF (n%i := 0 ) THEN
+            counter := 1;
+        END IF;
+        IF (counter := 0) THEN
+            DBMS_OUTPUT.PUT_LINE(n||' is prime number');
+        END IF;
+    END LOOP;
+END;
+
+
+declare
+fac number:=1;
+n number:=&n;
+begin
+while n>0
+loop
+fac:=n*fac;
+n:=n-1;
+end loop;
+dbms_output.put_line(fac);
+end;
+
+declare
+fac number:=1;
+n number:=&n;
+begin
+for i in 1..5
+loop
+fac:=n*fac;
+n:=n-1;
+end loop;
+uma(fac);
+end;
+
+variable g number;
+set serveroutput on
+declare
+a number:=10;
+begin
+:g:=a+1;
+end;
+
+print g
+
+declare
+cursor c1 is select ename,sal from emp;
+v_ename varchar2(20);
+v_sal number(20);
+begin
+    if not c1%isopen then
+    open c1;
+    end if;
+fetch c1 into v_ename,v_sal;
+while c1%found
+loop
+fetch c1 into v_ename,v_sal;
+loop
+fetch c1 into v_ename,v_sal;
+exit when c1%notfound;
+exit when c1%rowcount>5;
+dbms_output.put_line( rpad(v_ename,10,' ') || v_sal|| ' ' ||c1%rowcount|| rpad(' ',10));
+end loop;
+end loop;
+close c1;
+end;
+
+commit
+
+
+DECLARE  
+-- declare variables for data fetched from cursors
+  empid      employees.employee_id%TYPE; -- variable for employee_id
+  jobid      employees.job_id%TYPE;      -- variable for job_id
+  lastname   employees.last_name%TYPE;   -- variable for last_name
+  rowcount   NUMBER;
+-- declare the cursors
+  CURSOR cursor1 IS SELECT last_name, job_id FROM employees 
+                 WHERE job_id LIKE '%CLERK';
+  CURSOR cursor2 is SELECT employee_id, last_name, job_id FROM employees 
+                 WHERE job_id LIKE '%MAN' OR job_id LIKE '%MGR';
+BEGIN
+-- start the processing with cursor1
+  OPEN cursor1; -- open cursor1 before fetching
+  DBMS_OUTPUT.PUT_LINE( '---------- cursor 1-----------------' );
+  LOOP
+    FETCH cursor1 INTO lastname, jobid; -- fetches 2 columns into variables
+-- check the cursor attribute NOTFOUND for the end of data
+    EXIT WHEN cursor1%NOTFOUND;
+-- display the last name and job ID for each record (row) fetched
+    DBMS_OUTPUT.PUT_LINE( RPAD(lastname, 25, ' ') || jobid );
+  END LOOP;
+  rowcount := cursor1%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('The number of rows fetched is ' || rowcount );
+  CLOSE cursor1;
+
+-- start the processing with cursor2
+  OPEN cursor2;
+  DBMS_OUTPUT.PUT_LINE( '---------- cursor 2-----------------' );
+  LOOP
+-- fetch 3 columns into the variables
+    FETCH cursor2 INTO empid, lastname, jobid; 
+    EXIT WHEN cursor2%NOTFOUND;
+-- display the employee ID, last name, and job ID for each record (row) fetched
+    DBMS_OUTPUT.PUT_LINE( empid || ': ' || RPAD(lastname, 25, ' ') || jobid );
+  END LOOP;
+  rowcount := cursor2%ROWCOUNT;
+  DBMS_OUTPUT.PUT_LINE('The number of rows fetched is ' || rowcount );
+  CLOSE cursor2;
+END;
+/
+
+
+declare
+v_ename emp.ename%type;
+v_deptno emp.deptno%type;
+cursor c1 is select ename from emp;
+cursor c2 is select deptno from emp;
+rowcount number;
+begin
+    if not c1%isopen then
+    open c1;
+    end if;
+    loop
+fetch c1 into v_ename;
+    exit when c1%notfound;
+    uma(v_ename);
+    end loop;
+rowcount:=c1%rowcount;
+uma('the number of employees are:'|| rowcount);
+close c1;
+    open c2;
+    fetch c2 into v_deptno; 
+    while c2%found 
+    loop
+        fetch c2 into v_deptno; 
+    uma(v_deptno);
+    end loop;
+close c2;
+end;
+
+commit
+
+select *from employees
+declare
+v_first_name employees.first_name%type;
+begin
+select first_name into v_first_name from employees where first_name='Steven';
+dbms_outputlname);
+exception when too_many_rows then
+uma('more than two numbers ');
+end;
+
+
+declare
+v_ename varchar2(20);
+begin
+select ename into v_ename from emp where sal=3000;
+uma(v_ename);
+exception when too_many_rows then
+uma('the more than two numbers ');
+end;
+
+declare
+v_ename emp.ename%type;
+begin
+select ename into v_ename from emp where ename='uma';
+uma(v_ename);
+exception when no_data_found then
+uma('no data exists in a table');
+end;
+
+
+commit
+
+declare
+cursor c1 is select ename from emp;
+v_ename emp.ename%type;
+begin
+open c1;
+fetch c1 into v_ename;
+uma(v_ename);
+open c1;
+exception when cursor_already_open then
+uma('cursor already open baby');
+close c1;
+end;
+
+commit
+
+declare
+cursor c1 is select sal from emp;
+v_sal emp.sal%type;
+begin
+fetch c1 into v_sal;
+uma(v_sal);
+close c1;
+exception
+when invalid_cursor then
+uma('not open a cursor better to open a cursor');
+end;
+
+commit
+
+begin
+insert into emp(empno,sal) values(1,'devi');
+exception 
+when invalid_number then
+uma('invalid string type');
+end;
+
+set serveroutput on
+declare
+u exception;
+begin
+if to_char(sysdate,'dy')='mon' then
+raise u;
+end if;
+when u then
+uma('my exception raised today');
+end;
+
+
+declare
+cursor c1(p_deptno number) is select *from emp where deptno=p_deptno;
+i emp%rowtype;
+begin
+open c1(20);
+loop
+fetch c1 into i;
+exit when c1%notfound;
+uma(i.ename|| ' '|| i.deptno||' '||i.job);
+end loop;
+open c1(30);
+exception when cursor_already_open then
+uma('its alreday open');
+close c1;
+end;
+
+declare
+cursor c1 is select * from emp;
+rowcount number;
+begin
+for i in c1
+loop
+uma(i.ename||' '||i.sal||' '||i.deptno);
+--uma('the employees count:'|| rowcount);
+end loop;
+end;
+
+
+begin
+for i in (select *from emp)
+loop
+uma(i.ename||' '||i.sal);
+end loop;
+end;
+************ PARAMETRIZED CURSORS **************
+declare
+cursor c1(p_job varchar2) is select * from emp where job=p_job;
+i emp%rowtype;
+begin
+open c1('MANAGER');
+uma('the manager name is:');
+loop
+fetch c1 into i;
+exit when c1%notfound;
+uma(i.ename);
+end loop;
+close c1;
+open c1('ANALYST');
+loop
+fetch c1 into i;
+exit when c1%notfound;
+uma(i.ename);
+end loop;
+close c1;
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

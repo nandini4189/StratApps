@@ -1,0 +1,55 @@
+
+	
+
+
+select *from year
+
+YEAR	MONTH	CID	FD_AMOUNT	RENEWAL	CNAME
+
+2018	JAN	100	10000		N	U
+2018	JAN	101	24000		N	R
+2018	JAN	102	12000		N	M
+2018	JAN	103	20000		N	S
+2018	FEB 	100	10000		R	U
+2018	FEB 	102	12000		R	M
+2018	FEB 	103	20000		R	S
+2018	FEB 	104	30000		N	T
+2018	FEB 	105	20000		N	V
+2018	MAR	100	10000		R	U
+2018	MAR	102	12000		R	M
+2018	MAR	104	30000		R	T
+2018	MAR	106	13000		N	W
+
+
+
+
+:BY uSING DECODE
+
+
+select month,sum(decode(renewal,'N',1,0)) New_customer,
+                sum(decode(renewal,'R',1,0)) Renewal,
+                sum(decode(renewal,'N',1,'R',1)) Total from year group by month
+                
+MONTH	NEW_CUS RENE    TOTAL
+
+MAR	1	3	4
+FEB 	2	3	5
+JAN	4	0	4
+
+                                             (OR)
+
+: BY USING INLINE VIEWS
+
+
+select N.month,N.renewal,R.renewal,N.renewal+R.renewal total
+from
+(select month,sum(case when renewal='N' then 1 else 0 end) renewal from year group by month)N,
+ (select month,sum(case when renewal='R' then 1 else 0 end) renewal from year group by month)R
+ where N.month=R.month
+
+
+MONTH   RENEWAL RENEWAL TOTAL
+
+MAR	1	3	4
+FEB 	2	3	5
+JAN	4	0	4

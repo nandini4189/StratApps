@@ -1,0 +1,143 @@
+Part-D
+
+1.a
+
+2.b
+ 
+3.C
+
+4.C
+
+5.D
+
+6.D
+
+7.C
+
+8.a
+
+9.b
+
+10.b
+
+
+
+
+part-C
+
+1.select length('Count the number of words in this sentence')
+-length(replace('Count the number of words in this sentence',' ',''))+1 "no of words" from dual
+
+
+2.select substr('Jaya Praveen',instr('Jaya Praveen',' ',1,1)+1)||' '||substr('Jaya Praveen',1,instr('Jaya Praveen',' ', 1,1)-1) from dual
+
+4.select substr('find the 4th word in this string',instr('find the 4th word in this string' ,' ',1,6)+1) from dual
+
+
+5.select rtrim('Suresh*****','*') from dual
+
+3.NLS function it will bring space values from string
+
+Part- B
+
+
+1.
+	FROM clause
+	join
+	on condition (Ansi)
+	where condition  (sequel)
+	group by
+	having
+	select
+	order by
+2.select replace(orderid,substr(instr(orderid,5,'*',456))) from dual
+
+
+
+
+Part-A
+
+
+20.select s.snum,s.sname,c.cnum 
+from salespeople s,customers c where s.snum=c.snum and c.cnum>1 
+
+1.select cname,rating from customers where cname='san jose' and rating>200
+
+
+2.select *from customers where city is null
+
+3.select *from orders where odate between ('3-oct-1994') and ('4-oct-1994')
+
+4.select *from customers 
+where city='rome'and rating not in(select rating from customers where rating<=100)
+
+
+5.select s.snum,c.snum,s.sname 
+from salespeople s join customers c 
+on c.snum=s.snum where s.sname in('Peel','Motika') 
+
+6.select *from orders where amt is not null and amt <>0
+
+7.select o.onum,s.snum,max(o.amt) 
+from salespeople s,orders o 
+where s.snum=o.snum 
+group by o.onum,s.snum
+order by o.odate
+
+
+8.select odate,amt from orders where amt=
+ (select max(a) from(select sum(amt) a from orders group by odate,amt))
+
+9.select count(*) from customers where city is not null
+
+10.select odate,count(*) from orders group by odate  
+
+11.select s.sname,c.snum 
+	from salespeople s ,customers c 
+	where s.snum=c.snum and c.city=s.city
+
+
+12. select o.onum,c.cnum,c.cname from orders o join customers c on o.cnum=c.cnum and 
+
+13.select o.amt,s.comm,c.rating
+	from salespeople s join orders o on (s.snum=o.snum) join customers c
+	on (o.cnum=c.cnum) and c.rating>100
+
+
+14.select cname from customers where rating=100 
+
+16.All orders credited to the same salesperson who services Hoffman
+ select cname,city from cust where rating=(select rating from cust where  cname='Hoffman');
+
+18.select count(*) from customers 
+where rating >(select avg(rating) from customers where city='San Jose')
+
+
+17.select cname,city from customers 
+where rating=(select rating from customers where  cname='Hoffman');
+
+
+15.select cname from customers 
+where city in(select s.city from customers c, salespeople s where c.snum=s.snum and s.sname='Serres')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

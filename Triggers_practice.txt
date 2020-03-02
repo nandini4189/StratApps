@@ -1,0 +1,366 @@
+1. Write a plsql trigger to avoid the dname as duplicate and null value
+
+create or replace trigger trg_nnd
+before insert or update 
+of dname
+on dept
+for each row
+declare
+cnt number;
+begin
+select count(*) into cnt 
+from dept
+where dname=:new.dname;
+if cnt>0 THEN
+raise_application_error(-20345,'dname should not be duplicate');
+elsif :new.dname is null then
+raise_application_error(-20346,'dname should not be null');
+end if;
+end;
+
+select * from emp;
+
+insert into dept values(60,'ACCOUNTING','HYD');
+
+insert into dept values(60,'NULL','HYD');
+
+
+2. write a plsql trigger to trace the userid and date of delete into trace table?
+
+create table trace(userid varchar2(20),dor date);
+
+create or replace trigger trg_del
+after delete 
+on emp
+for each row
+begin
+insert into trace values (user,sysdate);
+end;
+
+delete from emp where empno=7844;
+
+select * from trace;
+
+
+
+3. When condition 
+
+-- condition is true then only trigger will excute otherwise not excuted.
+
+create or replace trigger trg_del
+after delete 
+on emp
+for each row
+when (old.sal>1500)
+begin
+insert into trace values (user,sysdate);
+end;
+
+4. instead of triggers
+
+-- Trigger on View
+-- Used to manipulate join views
+-- Defaulty it is row level trigger
+-- No need to use the for each keyword.
+
+create or replace view ev as select * from emp;
+
+create or replace trigger trg_ev
+instead of delete
+on ev
+begin
+rafi('record is removed');
+end;
+
+delete from ev where empno=7844;
+
+select * from ev;
+
+---------------------------
+
+create or replace view ed_view
+as
+select empno,ename,job,sal,e.deptno,dname,loc
+from emp e,dept d
+where e.deptno=d.deptno;
+
+
+create or replace trigger trg_edv
+instead of delete
+on ed_view
+begin
+delete from emp
+where deptno=:old.deptno;
+delete from dept
+where deptno=:old.deptno;
+rafi('records are removed');
+end;
+
+delete from ed_view where deptno=10;
+
+select * from emp;
+
+select * from dept;
+
+
+
+************** ********* TRIGGERS *********** *****
+
+...........> 1. write a plsql row level trigger on emp table whenever inserting data on table sal should be more than 5000.
+
+create or replace trigger trg1
+before insert on emp2
+for each row
+begin
+if :new.sal<5000 then
+raise_application_error(-20182,'sal must be greater than 5000');
+end if;
+end;
+
+insert into emp2(empno,ename,sal) values(11,'uma',2000);
+
+ORA-20182: sal must be greater than 5000
+ORA-06512: at "SCOTT.TRG1", line 3
+ORA-04088: error during execution of trigger 'SCOTT.TRG1'
+
+...............................................................
+
+......> 2. write a plsql trigger update the deptno on dept table automatically those deptno's modified on employees table also'
+
+create or replace trigger trg
+before update or insert or delete on dept
+for each row
+begin
+update emp2 set deptno=:new.deptno where deptno=:old.deptno;
+end;
+
+update dept set deptno=1 where deptno=10
+select *from dept
+roll back
+
+...................................................................
+
+ ...... > 3. Auto Increment...
+ 
+ create sequence s2 start with 1
+
+create table trace(sno number primary key,name varchar2(20))
+
+create or replace trigger tr2
+before insert on trace 
+for each row
+begin
+select s2.nextval into :new.sno from dual;
+end;
+
+insert into trace(name) values('uma')
+insert into trace(name) values('sri love')
+
+insert into trace(name) values('devi')
+select *from trace
+
+...................................................
+
+........> 4. write a plsql statement level trigger on emp table do not perform dml operations on weekdays.
+
+
+create or replace trigger tr_weekday
+before insert or update or delete on emp
+begin
+if to_char(sysdate,'dy') in ('sat','sun') then
+ raise_application_error(-20181,'we cont perform dml operations on sat and sun');
+end if;
+end;
+
+alter table emp enable all triggers
+
+delete from dept where deptno=10
+select *from emp
+rollback
+
+...................................................................
+
+ ..........> 5. write a plsql statement level trigger on emp table do not perform dml operations on last day of the month.
+
+create or replace trigger trg_lastday
+before insert or update or delete on emp
+begin
+if sysdate=last_day(sysdate) then
+raise_application_error(-20123,'we dont perform dml operations on last day of the month');
+end if;
+end;
+
+.................................................
+
+......> 6. write a plsql statement level trigger on emp table do not perform any dml operations on any days.
+
+create or replace trigger trg_dml
+before insert or update or delete on emp
+begin
+if inserting then
+raise_application_error(-20134,'we cant perform inserting operation');
+elsif updating then
+raise_application_error(-20134,'we cant perform updating operation');
+elsif deleting then
+raise_application_error(-20134,'we cant perform deleting operation');
+end if;
+end;
+
+insert into emp(ename,sal) values('uma',20000);
+
+ORA-20134: we cant perform inserting operation
+ORA-06512: at "SCOTT.TRG_DML", line 3
+ORA-04088: error during execution of trigger 'SCOTT.TRG_DML'
+
+.......................................................................
+
+......> 7. if any dml operations done on emp table that msg was entered in test table.
+
+select *from test
+
+desc test
+create or replace trigger trg_msg
+after insert or update or delete on emp
+declare
+z varchar2(100);
+begin
+if inserting then
+z:='rows inserted';
+elsif updating then
+z:='rows updated';
+elsif deleting then 
+z:='rows deleted';
+end if;
+insert into test values(z);
+end;
+
+show error
+insert into emp(ename) values('uma')
+
+alter table emp enable all triggers
+create table test (msg varchar2(100))
+
+select *from test
+.....................................................................
+
+.........> 8. write a plsql row level trigger if inserting on emp table that values stored in another table,
+              if updating on emp table those values are stored on another table,
+              if deleted on emp table those values are stored on enother table.
+
+create or replace trigger te2
+after insert or update or delete on emp
+for each row
+begin
+if inserting then
+insert into t1(empno,ename,job)values(:new.empno,:new.ename,:new.job);
+elsif updating then
+insert into t2(empno,ename,job) values(:old.empno,:old.ename,:old.job);
+elsif deleting then
+insert into t3(empno,ename,job) values(:old.empno,:old.ename,:old.job);
+end if;
+end;
+
+insert into emp(empno,ename,job) values(1001,'uma','executive');
+
+alter table emp enable all triggers
+select *from t1
+
+.....................................................................................
+
+......> 9. 
+drop table x
+create table x(col1 number(3),col2 number(3),col3 date)
+
+create sequence s3 start with 5878
+
+create or replace trigger trg_col
+before insert on x
+for each row
+begin
+select s3.nextval into :new.col1 from dual;
+dbms_output.put_line('t1 fired');
+end;
+
+show error
+
+insert into emp(ename,sal,deptno) values('uma',20000,10)
+
+alter table emp enable all triggers
+select *from x
+
+
+create or replace trigger trg_col1
+before insert on x
+for each row
+declare
+v_col2 varchar2(20);
+begin
+select to_char(reverse(:new.col1)) into v_col2 from dual;
+:new.col2:=v_col2;
+uma('t2 fired');
+end;
+show error
+
+insert into x(col3) values(sysdate)
+select *from x
+
+create or replace trg_col2
+before insert on x
+for each row
+follows trg_col1,trg_col
+declare
+.........
+...........
+...........
+end;
+
+commit
+........................................................................................
+
+create table sum(totsum number(4))
+
+create or replace procedure proc_sum
+is
+z number;
+begin
+delete from sum;
+select sum(sal) into z from emp;
+insert into sum values(z);
+end;
+
+create or replace trigger trg_proc
+after insert or update or delete on emp
+call proc_sum
+
+insert into emp(ename,job,sal) values('uma','teamlead',20000)
+update emp set sal=sal+100 where empno=7369
+select *from sum
+exec proc_sum(z)
+alter table emp enable all triggers
+ select *from emp
+roll back
+
+delete from dept where deptno=10
+roll back
+select *from dept
+
+....................................................................
+
+create or replace trigger trg_nnd
+before insert on dept
+for each row
+declare
+cnt number;
+begin
+select count(*) into cnt from dept where dname=:new.dname;
+if cnt>0 then
+raise_application_error(-20165,'there is a restriction only one time insertion');
+elsif :new.dname is null then
+raise_application_error(-20186,'there is not a null value');
+end if;
+end;
+show error
+
+insert into dept(deptno,dname,loc)values(10,'ACCOUNTING','hyd')
+insert into dept(deptno,dname,loc)values(10,null,'hyd')
+

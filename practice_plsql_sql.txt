@@ -1,0 +1,387 @@
+drop table emp;
+
+select *from emp;
+select *from dept
+
+CREATE TABLE emp(
+  empno  NUMBER(4) CONSTRAINT empno_pk PRIMARY KEY,
+  ename VARCHAR2(10),
+  job           VARCHAR2(9),
+  mgr    NUMBER(4),
+  hiredate      DATE,
+  sal        NUMBER(7,2),
+  comm    NUMBER(7,2),
+  deptno NUMBER(2) CONSTRAINT emp_deptno_fk REFERENCES dept(deptno)
+);
+
+INSERT INTO emp VALUES (7369,'SMITH','CLERK',7902,to_date('17-12-1980','dd-mm-yyyy'),800,NULL,20);
+INSERT INTO emp VALUES (7499,'ALLEN','SALESMAN',7698,to_date('20-2-1981','dd-mm-yyyy'),1600,300,30);
+INSERT INTO emp VALUES (7521,'WARD','SALESMAN',7698,to_date('22-2-1981','dd-mm-yyyy'),1250,500,30);
+INSERT INTO emp VALUES (7566,'JONES','MANAGER',7839,to_date('2-4-1981','dd-mm-yyyy'),2975,NULL,20);
+INSERT INTO emp VALUES (7654,'MARTIN','SALESMAN',7698,to_date('28-9-1981','dd-mm-yyyy'),1250,1400,30);
+INSERT INTO emp VALUES (7698,'BLAKE','MANAGER',7839,to_date('1-5-1981','dd-mm-yyyy'),2850,NULL,30);
+INSERT INTO emp VALUES (7782,'CLARK','MANAGER',7839,to_date('9-6-1981','dd-mm-yyyy'),2450,NULL,10);
+INSERT INTO emp VALUES (7788,'SCOTT','ANALYST',7566,to_date('13-JUL-87','dd-mm-rr')-85,3000,NULL,20);
+INSERT INTO emp VALUES (7839,'KING','PRESIDENT',NULL,to_date('17-11-1981','dd-mm-yyyy'),5000,NULL,10);
+INSERT INTO emp VALUES (7844,'TURNER','SALESMAN',7698,to_date('8-9-1981','dd-mm-yyyy'),1500,0,30);
+INSERT INTO emp VALUES (7876,'ADAMS','CLERK',7788,to_date('13-JUL-87', 'dd-mm-rr')-51,1100,NULL,20);
+INSERT INTO emp VALUES (7900,'JAMES','CLERK',7698,to_date('3-12-1981','dd-mm-yyyy'),950,NULL,30);
+INSERT INTO emp VALUES (7902,'FORD','ANALYST',7566,to_date('3-12-1981','dd-mm-yyyy'),3000,NULL,20);
+INSERT INTO emp VALUES (7934,'MILLER','CLERK',7782,to_date('23-1-1982','dd-mm-yyyy'),1300,NULL,10);
+COMMIT;
+
+
+set serveroutput on
+declare 
+fac number:=1;
+n number:=&n;
+begin
+for i in 1..n
+loop
+fac:=fac*n;
+n:=n-1;
+end loop;
+dbms_output.put_line(fac);
+end;
+
+set serveroutput on
+declare
+z exception;
+vsal number;
+begin
+select sal into vsal from emp where empno=7902;
+if vsal>2000 then
+raise z;
+else
+update emp set sal=sal+100 where empno=7902;
+end if;
+exception when z then
+raise_application_error(-20752,'salary alredy high');
+end;
+
+set serveroutput on
+declare
+z exception;
+pragma exception_init(z,-1400);
+begin
+insert into emp(ename) values('uma');
+exception when z then
+uma('not to insert nulls');
+end;
+
+
+create or replace procedure first_proc(p_name in varchar2)
+is
+begin
+dbms_output.put_line('hi hello'|| p_name);
+end;
+
+set serveroutput on
+exec first_proc('what are u doing');
+
+begin
+first_proc;
+end;
+
+DECLARE 
+   a number; 
+   b number; 
+   c number;
+PROCEDURE first_proc(x IN number, y IN number, z OUT number) IS 
+BEGIN 
+   IF x < y THEN 
+      z:= x; 
+   ELSE 
+      z:= y; 
+   END IF; 
+END;   
+BEGIN 
+   a:= 23; 
+   b:= 45; 
+   c:=a+b;
+   dbms_output.put_line(' Minimum of (23, 45) : ' || c); 
+END; 
+
+
+commit
+
+set serveroutput on
+declare
+cursor c1 is select deptno,dname from dept;
+vdeptno dept.deptno%type;
+vdname dept.dname%type;
+begin
+open c1;
+loop
+fetch c1 into vdeptno,vdname;
+exit when c1%notfound;
+dbms_output.put_line('the emplo 
+yees of department is:'||' '||rpad(vdeptno,6)||' '||rpad(vdname,6));
+declare
+cursor c2(vdeptno number) is select * from emp where deptno=vdeptno;
+empdet emp%rowtype;
+begin
+open c2(vdeptno);
+loop
+fetch c2 into empdet;
+exit when c2%notfound;
+dbms_output.put_line(rpad(empdet.ename,6)||' '||rpad(empdet.sal,6)||' '||rpad(empdet.deptno,6));
+end loop;
+close c2;
+end;
+end loop;
+close c1;
+end;
+
+
+create table strength(sid number,sname varchar2(10),s_strength number);
+
+insert into strength values(&sid,'&sname',&s_strength)
+select *from strength
+
+create or replace procedure pm(p_sname in varchar2,p_s_strength out number)
+is
+begin
+select s_strength into p_s_strength from strength where sname=p_sname;
+end;
+
+
+variable x number;
+set serveroutput on
+exec pm('CSC',:x);
+
+print x
+
+
+create or replace function totalstrength
+return integer
+as 
+total integer:=0;
+begin
+select sum(s_strength) into total from strength;
+return total;
+end totalstrength;
+
+
+
+
+declare 
+answer integer; 
+  
+begin 
+answer:=totalstrength(); 
+   dbms_output.put_line('Total strength of students is  ' || answer);   
+end; 
+
+select totalstrength(total) from totalstrength;
+
+
+
+create or replace procedure p1(p_empno number)
+is 
+v emp%rowtype;
+begin
+select ename,sal,job into v.ename,v.sal,v.job from emp where empno=p_empno;
+uma(v.ename||','||v.sal);
+end;
+
+set serveroutput on
+exec p1(7839);
+.......................
+ Anonymous Block
+ 
+ begin
+ p1(7839);
+end;
+......................
+set serveroutput on
+call p1(7839);
+
+commit
+
+desc user_source;
+select text from user_source where name='p1';
+
+create or replace procedure p2(p_deptno number)
+is
+cursor c1 is select *from emp where deptno=p_deptno;
+i emp%rowtype;
+begin
+open c1;
+loop
+fetch c1 into i;
+exit when c1%notfound;
+uma(i.deptno||' '||i.ename||' '||i.job||' '||i.sal);
+end loop;
+close c1;
+end;
+
+exec p2(10);
+
+begin
+p2(30);
+end;
+
+
+call p2(20);
+
+variable d number;
+set serveroutput on
+declare
+x number:=10;
+begin
+:d=x/2;
+uma(d);
+end;
+
+
+create or replace procedure pp(p_ename in varchar2,p_sal out number)
+is 
+begin
+select sal into p_sal from emp where ename=p_ename;
+end;
+
+
+variable z number
+set serveroutput on
+exec pp('KING',:z);
+print z
+
+declare
+x number:=10;
+begin
+pp('ALLEN',x);
+uma(x);
+end;
+
+create or replace 
+commit
+
+show error
+
+create or replace procedure p4(p_empno emp.empno%type,
+                                p_ename out emp.ename%type,
+                                p_sal out emp.sal%type,
+                                p_comm out emp.comm%type)
+                                                       
+is 
+begin
+select ename,sal,comm into p_ename,p_sal,p_comm from emp where empno=p_empno;
+end;
+
+commit
+set serveroutput on
+variable s_ename varchar2(20)
+variable s_sal number
+variable s_comm number
+set serveroutput on
+set autoprint on
+exec p4(7902||' '||:s_ename||' '||:s_sal||' '||:s_comm);
+
+create or replace procedure p11(p_empno in emp.empno%type,
+                     p_job out emp.job%type,
+                    p_deptno out emp.deptno%type)
+is
+begin
+select job,deptno into p_job,p_deptno from emp where empno=p_empno;
+end;
+
+
+show error;
+
+set serveroutput on
+set autoprint on
+variable g_job varchar2;
+variable g_deptno number
+exec p11(7902,:g_job,:g_deptno);
+commit
+
+CREATE OR REPLACE PROCEDURE format_phone
+                         (p_phone_no IN OUT VARCHAR2)
+IS
+BEGIN
+p_phone_no := '(' || SUBSTR(p_phone_no,1,3) ||
+')' || SUBSTR(p_phone_no,4,3) ||
+'-' || SUBSTR(p_phone_no,7);
+END format_phone;
+
+VARIABLE g_phone_no VARCHAR2(15)
+BEGIN
+:g_phone_no := &g_phone_no;
+END;
+select substr(job,1,3) from emp
+
+create or replace procedure PE(p_empno  in number)
+is
+v_ename emp.ename%type;
+v_job emp.job%type;
+v_sal emp.sal%type;
+v_hiredate emp .hiredate%type;
+v_deptno emp.deptno%type;
+begin
+select ename,job,sal,hiredate,deptno into v_ename,v_job,v_sal,v_hiredate,v_deptno from emp where empno=p_empno;
+uma(v_ename||' '||v_job);
+end;
+
+set serveroutput on
+variable v_ename varchar2(10);
+variable v_job varchar2(10);
+variable v_sal number;
+variable v_hiredate date;
+variable v_deptno number;
+
+exec PE(7499,:v_ename,:v_job,:v_sal,:v_hiredate,:v_deptno);
+
+begin
+PE(7499,:v_ename,:v_job,:v_sal,:v_hiredate,:v_deptno);
+end;
+
+begin
+PE(7499);
+end;
+
+commit
+
+
+select round(months_between(sysdate,hiredate)/12) from emp
+
+select round((sysdate-hiredate)/365) "Years",
+        trunc((sysdate-hiredate)/30) "Months",
+        round(sysdate-hiredate) "Days" from emp where empno=7844
+
+show error
+
+ select 
+       trunc(months_between(SYSDATE,hiredate)/12)||' '||'years' Years, 
+      (TRUNC(months_between(SYSDATE,hiredate)-(TRUNC(months_between(SYSDATE,hiredate)/12)*12)))||' '||'months' Months,       
+      trunc((months_between(sysdate,hiredate)-trunc(months_between(sysdate,hiredate)))*24)||' '||'days' Days,
+      (trunc(sysdate-hiredate))*24 ||' '||'total hours' Total_Hours, 
+      (trunc(sysdate-hiredate))*24*60 ||' '||'total mins' Total_Mins from emp
+
+select (trunc(sysdate-hiredate))*24 "total hours" from emp
+select  *from emp where empno=(select empno from emp where ename='KING') and job='MANAGER';
+select *from emp
+
+select trunc(months_between(SYSDATE,hiredate)-trunc(months_between(sysdate,hiredate)))*30) from emp
+
+
+
+select 
+       trunc(months_between(SYSDATE,hiredate)/12)||' '||'years' Years, 
+      (TRUNC(months_between(SYSDATE,hiredate)-(TRUNC(months_between(SYSDATE,hiredate)/12)*12)))||' '||'months' Months,       
+       trunc(sysdate - add_months(hiredate,trunc(months_between(sysdate,hiredate))))||' '||'days' Days ,
+      (trunc(sysdate-hiredate))*24 ||' '||'total hours' Total_Hours, 
+      (trunc(sysdate-hiredate))*24*60 ||' '||'total mins' Total_Mins from emp
+
+
+select trunc(sysdate - add_months(hiredate,trunc(months_between(sysdate,hiredate)))) "days" from emp
+select trunc(sysdate-add_months(hiredate,trunc(months_between(sysdate,hiredate)))) from emp
+select add_months(hiredate,1) from emp
+select add_months(hiredate,454) from emp
+select *from emp
+
+.....................................................
+
+select months_between(sysdate,hiredate) from emp
+select (trunc(months_between(sysdate,hiredate)/12)*12) from emp
+select trunc((months_between(sysdate,hiredate)-(trunc(months_between(sysdate,hiredate)/12)*12))) "MONTHS" from emp

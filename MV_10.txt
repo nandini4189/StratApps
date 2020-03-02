@@ -1,0 +1,78 @@
+
+
+SQL> grant create materialized view to scott;
+
+Grant succeeded.
+
+
+create materialized view emp_dept_count
+    as 
+    select dname,job,count(*) from emp e,dept d
+    where e.deptno=d.deptno
+    group by dname,job;
+
+
+Materialized view EMP_DEPT_COUNT created.
+
+select *from emp_dept_count
+
+SALES		MANAGER		1
+SALES		CLERK		1
+ACCOUNTING	MANAGER		1
+ACCOUNTING	PRESIDEN	T	1
+ACCOUNTING	CLERK		1
+SALES		SALESMAN	4
+RESEARCH	MANAGER		1
+RESEARCH	ANALYST		2
+RESEARCH	CLERK		2
+
+
+--> for update emp table the date will be
+
+7369	SMITH	CLERK	7902		17-DEC-80	1000		20
+7499	ALLEN	SALESMAN	7698	20-FEB-81	1600	300	30
+7521	WARD	SALESMAN	7698	22-FEB-81	1250	500	30
+7566	JONES	MANAGER	7839		02-APR-81	2975		20
+7654	MARTIN	SALESMAN	7698	28-SEP-81	1250	1400	30
+7698	BLAKE	MANAGER		7839	01-MAY-81	2850		30
+7782	CLARK	MANAGER	7839		09-JUN-81	2450		10
+7788	SCOTT	ANALYST	7566		19-APR-87	3000		20
+
+it will not effect in the materialized view table.
+
+
+create table tt(id number(2) primary key,name varchar2(10));
+
+insert into tt values(&id,'&name')
+
+select *from tt
+
+11	uma
+12	sushma
+13	viggi
+14	divya
+15	shan
+16	ram
+
+commit
+
+create materialized view mv
+refresh complete on commit
+as
+select *from tt
+
+mv created
+
+
+select *from mv
+
+11	uma
+12	sushma
+13	viggi
+14	divya
+15	shan
+16	ram
+
+
+when ever
+ the base table 

@@ -1,0 +1,471 @@
+
+					*********VIEWS IN ORACLE *************
+
+View is a virtual table that does not physically exist. Rather, 
+	it is created by a query joining one or more tables.
+
+SYNTAX ::
+	CREATE VIEW view_name AS
+  SELECT columns
+  FROM tables
+  [WHERE conditions];
+
+view_name :
+
+	The name of the Oracle VIEW that you wish to create.
+WHERE conditions :
+
+	Optional. The conditions that must be met for the records to be included in the VIEW.
+
+USER CREATION *******************
+
+SQL> create user uma identified by uma;
+
+User created.
+
+SQL> grant connect to uma;
+
+Grant succeeded.
+
+SQL> grant connect,resource,DBA to uma;
+
+Grant succeeded.
+
+SQL>  grant unlimited tablespace to uma;
+
+Grant succeeded.
+
+SQL>  grant select ,insert,update,delete on scott.emp to uma;
+
+Grant succeeded.
+
+SQL> conn uma
+Enter password: ***
+Connected.
+
+SQL> create or replace v as select *from scott.emp;
+create or replace v as select *from scott.emp
+
+
+SQL> create or replace view v as select ename,deptno,sal,hiredate from scott.emp;
+
+View created.
+
+SQL> select *from v;
+
+ENAME          DEPTNO        SAL HIREDATE
+---------- ---------- ---------- ---------
+SMITH              20        800 17-DEC-80
+ALLEN              30       1600 20-FEB-81
+WARD               30       1250 22-FEB-81
+JONES              20       2975 02-APR-81
+MARTIN             30       1250 28-SEP-81
+BLAKE              30       2850 01-MAY-81
+CLARK              10       2450 09-JUN-81
+SCOTT              20       3000 19-APR-87
+KING               10       5000 17-NOV-81
+TURNER             30       1500 08-SEP-81
+ADAMS              20       1100 23-MAY-87
+JAMES              30        950 03-DEC-81
+FORD               20       3000 03-DEC-81
+MILLER             10       1300 23-JAN-82
+
+14 rows selected.
+
+
+SQL> create table x as select *from scott.emp;
+
+Table created.
+
+SQL> select *from x;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20
+      7499 ALLEN      SALESMAN        7698 20-FEB-81       1600        300         30
+      7521 WARD       SALESMAN        7698 22-FEB-81       1250        500         30
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20
+      7654 MARTIN     SALESMAN        7698 28-SEP-81       1250       1400         30
+      7698 BLAKE      MANAGER         7839 01-MAY-81       2850                    30
+      7782 CLARK      MANAGER         7839 09-JUN-81       2450                    10
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20
+      7839 KING       PRESIDENT            17-NOV-81       5000                    10
+      7844 TURNER     SALESMAN        7698 08-SEP-81       1500          0         30
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20
+      7900 JAMES      CLERK           7698 03-DEC-81        950                    30
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20
+      7934 MILLER     CLERK           7782 23-JAN-82       1300                    10
+
+14 rows selected.
+
+SQL> create table y as select *from scott.dept;
+
+Table created.
+
+SQL> select *from y;
+
+    DEPTNO DNAME          LOC
+---------- -------------- -------------
+        10 ACCOUNTING     NEW YORK
+        20 RESEARCH       DALLAS
+        30 SALES          CHICAGO
+        40 OPERATIONS     BOSTON
+
+SQL> create table z as select *from scott.salgrade;
+
+Table created.
+
+SQL> select *from z;
+
+     GRADE      LOSAL      HISAL
+---------- ---------- ----------
+         1        700       1200
+         2       1201       1400
+         3       1401       2000
+         4       2001       3000
+         5       3001       9999
+
+
+SQL> create table regions as select *from hr.regions;
+
+Table created.
+
+SQL> create table countries as select *from hr.countries;
+
+Table created.
+
+SQL> create table locations as select *from hr.locations;
+
+Table created.
+
+SQL> create table departments as select *from hr.departments;
+
+Table created.
+
+SQL> create table jobs as select *from hr.jobs;
+
+Table created.
+
+  ************************TYPES OF VIEWS******************
+
+
+1.simple views
+2.complex views
+
+
+******** simple views
+
+
+ the views which is created without using the clauses
+
+>join condition
+>group by
+>having clauses
+>set operators
+>distinct
+>group functions
+
+
+SYNTAX For simple VIEW:	
+	
+		CREATE OR REPLACE [FORCE]/NOFORCE] VIEW view name
+				[(aliasName, as  SubQuery [with {check option/read only}
+				  constraint constraintName];
+
+
+
+OR REPLACE: Re-Creates the view if its already exists.
+
+
+FORCE: Specifies the View should be create if the base table does not exist,
+	 which is default.
+
+
+NO FORCE: creates the view only if the base tables exist, which is the default.
+
+
+ALIAS NAME : specifies name for the expressions selected by the view query.
+
+
+WITH CHECK OPTION: specifies that only rows accessible to the view can be inserted or updated or deleted.
+
+
+CONSTRAINT : constraint is the name assigned to the with check option or read only constraint.
+
+
+WITH READ ONLY : Ensures that no DML operations can be performed on this view.Only fetching the view rows.
+
+
+**********************************************************************************************************************
+
+EXAMPLES: WITH CHECK CONSTRAINT.
+		
+SQL> create or replace view empvu20
+    as select * from emp where deptno=20
+    with check option constraint empvu20;
+
+View created.
+
+SQL> select *from empvu20;
+
+     EMPNO ENAME      JOB              MGR HIREDATE         SAL       COMM     DEPTNO
+---------- ---------- --------- ---------- --------- ---------- ---------- ----------
+      7369 SMITH      CLERK           7902 17-DEC-80        800                    20
+      7566 JONES      MANAGER         7839 02-APR-81       2975                    20
+      7788 SCOTT      ANALYST         7566 19-APR-87       3000                    20
+      7876 ADAMS      CLERK           7788 23-MAY-87       1100                    20
+      7902 FORD       ANALYST         7566 03-DEC-81       3000                    20
+
+*************************************************************************************************************************
+
+EXAMPLE : WITH READ ONLY.
+
+SQL> create or replace view empvu10
+  2  (employee_no,employee_name,job_title) as select empno,ename,job
+	 from emp where deptno=10 with read only;
+
+View created.
+
+SQL> select *from empvu10;
+
+EMPLOYEE_NO EMPLOYEE_N JOB_TITLE
+----------- ---------- ---------
+       7782 CLARK      MANAGER
+       7839 KING       PRESIDENT
+       7934 MILLER     CLERK
+
+*****************************************************************************************************************************
+
+VIEW ON VIEW: we can create view on there view.
+
+SQL> create view v1 as select *from emp;
+
+View created.
+
+SQL> create view v2 as select empno,ename,job,sal*0.22 "bonus" from v1;
+
+View created.
+
+SQL> select *from v2;
+
+     EMPNO ENAME      JOB            bonus
+---------- ---------- --------- ----------
+      7369 SMITH      CLERK            176
+      7499 ALLEN      SALESMAN         352
+      7521 WARD       SALESMAN         275
+      7566 JONES      MANAGER        654.5
+      7654 MARTIN     SALESMAN         275
+      7698 BLAKE      MANAGER          627
+      7782 CLARK      MANAGER          539
+      7788 SCOTT      ANALYST          660
+      7839 KING       PRESIDENT       1100
+      7844 TURNER     SALESMAN         330
+      7876 ADAMS      CLERK            242
+      7900 JAMES      CLERK            209
+      7902 FORD       ANALYST          660
+      7934 MILLER     CLERK            286
+
+14 rows selected.
+
+SQL> drop view v1;
+
+View dropped.
+
+SQL> select *from v2;
+select *from v2
+             *
+ERROR at line 1:
+ORA-04063: view "SCOTT.V2" has errors
+
+
+SQL> rollback;
+
+Rollback complete.
+
+SQL> select *from v2;
+select *from v2
+             *
+ERROR at line 1:
+ORA-04063: view "SCOTT.V2" has errors     ////// in this V2 as Invalid
+
+
+To enable V2 as we can create the V1 view
+
+
+SQL> create or replace view v1 as select *from emp;
+
+View created.
+
+SQL> select *from v2;
+
+     EMPNO ENAME      JOB            bonus
+---------- ---------- --------- ----------
+      7369 SMITH      CLERK            176
+      7499 ALLEN      SALESMAN         352
+      7521 WARD       SALESMAN         275
+      7566 JONES      MANAGER        654.5
+      7654 MARTIN     SALESMAN         275
+      7698 BLAKE      MANAGER          627
+      7782 CLARK      MANAGER          539
+      7788 SCOTT      ANALYST          660
+      7839 KING       PRESIDENT       1100
+      7844 TURNER     SALESMAN         330
+      7876 ADAMS      CLERK            242
+      7900 JAMES      CLERK            209
+      7902 FORD       ANALYST          660
+      7934 MILLER     CLERK            286
+
+14 rows selected. 
+
+example: create view employees as select empno "empid",
+					 ename "emp_name",
+					 sal "salary",
+					 job "designation" from emp;
+
+INSERTING VIEW VALUES :
+	
+	insert into v1(empno,ename,job,mgr,hiredate,sal,comm,deptno)
+	
+	 values(1001,'UMA DEVI','MANAGER',1010,'10-sep-91',1000,null,10)
+
+
+1001	UMA DEVI	MANAGER	1010	10-SEP-91	1000		10
+7369	SMITH	CLERK	7902	17-DEC-80	800		20
+7499	ALLEN	SALESMAN	7698	20-FEB-81	1600	300	30
+7521	WARD	SALESMAN	7698	22-FEB-81	1250	500	30
+7566	JONES	MANAGER	7839	02-APR-81	2975		20
+7654	MARTIN	SALESMAN	7698	28-SEP-81	1250	1400	30
+7698	BLAKE	MANAGER	7839	01-MAY-81	2850		30
+
+
+Its effecting base table also
+
+
+
+******complex views*****
+
+the view which is created as any restiction clause is called complex view.
+the complex views can contain sub queries
+the sub queries can contains
+
+		to retrieve from multiple base tables
+		group rows using a group by or distinct clauses.
+		contain a functional call.
+
+
+SQL> create view empinfo as select e.ename "employe_name",d.dname "dept_name",d.loc "dept_location
+from emp e,dept d where d.deptno=e.deptno order by d.deptno;
+
+View created.
+
+SQL> select *from empinfo;
+
+employe_na dept_name      dept_location
+---------- -------------- -------------
+CLARK      ACCOUNTING     NEW YORK
+KING       ACCOUNTING     NEW YORK
+MILLER     ACCOUNTING     NEW YORK
+JONES      RESEARCH       DALLAS
+FORD       RESEARCH       DALLAS
+ADAMS      RESEARCH       DALLAS
+SMITH      RESEARCH       DALLAS
+SCOTT      RESEARCH       DALLAS
+WARD       SALES          CHICAGO
+TURNER     SALES          CHICAGO
+ALLEN      SALES          CHICAGO
+JAMES      SALES          CHICAGO
+BLAKE      SALES          CHICAGO
+MARTIN     SALES          CHICAGO
+
+14 rows selected.
+
+
+*************Group Functions on views****************
+
+SQL> create table emp_analysis as select deptno,count(*) "no_of_emp",min(sal) "minimum_sal",max(sal)
+ "maximum_sal",avg(sal) "average_sal" ,sum(sal) "total_sal" from emp group by deptno;
+
+Table created.
+
+SQL> select *from emp_analysis;
+
+    DEPTNO  no_of_emp minimum_sal maximum_sal average_sal  total_sal
+---------- ---------- ----------- ----------- ----------- ----------
+        30          6         950        2850  1566.66667       9400
+        20          5         800        3000        2175      10875
+        10          3        1300        5000  2916.66667       8750
+
+
+
+UPDATING THE COMPLEX VIEW:
+
+update emp_details set deptno=50 where deptno=10
+select * from  emp_details 
+
+
+ERROR : when ever we are using complex views in group functions no DML will be allowed
+rror at Command Line : 1,898 Column : 8
+Error report -
+SQL Error: ORA-01732: data manipulation operation not legal on this view
+01732. 00000 -  "data manipulation operation not legal on this view"
+*Cause:    
+
+
+**********************************************************************************************
+
+
+				SEQUENCES
+
+A sequence is an object in Oracle that is used to generate a number sequence. 
+
+This can be useful when you need to create a unique number to act as a primary key.
+
+
+SYNTAX :
+
+
+CREATE SEQUENCE sequence
+
+[INCREMENT BY n]
+
+[START WITH n]
+
+[{MAXVALUE n | NOMAXVALUE}]
+
+[{MINVALUE n | NOMINVALUE}]
+
+[{CYCLE | NOCYCLE}]
+
+[{CACHE n | NOCACHE}];
+
+
+
+
+create sequence seq2
+increment by 10
+start with 10
+maxvalue 100
+minvalue 1
+cache 20;
+
+select seq2.currval from dual
+select seq2.nextval from dual
+
+
+insert into departments(department_id,department_name) 
+values(departments.department_id_seq2.currval,'computers')
+
+
+
+ROLLUP,CUBE :
+
+select deptno,sum(sal) from emp
+group by rollup(deptno);
+
+select deptno,sum(sal),job from emp
+group by rollup(deptno,job);
+
+select deptno,sum(sal),job from emp
+group by rollup(job,deptno);
+
+select deptno,sum(sal),job from emp group by deptno rollup(job)
